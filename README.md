@@ -38,3 +38,17 @@ would return
 ```python
 {'model_year': 2015, 'month': 5, 'day': 14, 'hour': 0, 'year': 1995, 'ensemble_member': '1'}
 ```
+
+## Install
+Since this is only intended to run on JASMIN, you can just add my copy to your
+pythonpath (add to your .bashrc to make it permanent)
+```shell
+export PYTHONPATH="${PYTHONPATH}:/home/users/lsaffin/programming/jasmin-tracks"
+```
+If you want to your own copy to modify then clone this repository and install it in
+editable mode
+```shell
+git clone https://github.com/leosaffin/jasmin-tracks.git
+cd jasmin-tracks
+pip install -e .
+```
