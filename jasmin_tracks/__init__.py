@@ -202,11 +202,12 @@ datasets = {
     ),
     "ECMWF_Extended_Ensemble": TrackDataset(
         fixed_path=huracan_project_path / "EPSEXT100/TC/",
-        extra_path="Y{year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
+        extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
         filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.hart.new",
         variable_names=[
             "vorticity850hPa",
             "vorticity700hPa",
+            "vorticity600hPa",
             "vorticity500hPa",
             "vorticity400hPa",
             "vorticity300hPa",
@@ -237,7 +238,7 @@ matched_tracks = {
     ),
     "ECMWF_Extended_Ensemble": TrackDataset(
         fixed_path=huracan_project_path / "EPSEXT100/TC/",
-        extra_path="Y{year:04d}/" + f"{_YYYYMMDDHH}/" + "MATCH_{hemisphere}/",
+        extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/" + "MATCH_{hemisphere}/",
         filename="trmatch_cntl_tr{storm_number:04d}",
         variable_names=[
             "vorticity850hPa",
