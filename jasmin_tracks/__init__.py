@@ -90,8 +90,11 @@ datasets = {
     # Modern era reanalyses
     "ERA5": TrackDataset(
         fixed_path=huracan_project_path / "ERA5",
-        extra_path="{hemisphere}/",
-        filename="tr_trs_pos.{year}.2day_addT63vor_addmslp_add925wind_add10mwind.tcident.hart.nc",
+        extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
+        filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.new",
+        variable_names=[
+                           f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+                       ] + ["mslp", "vmax925hPa", "vmax10m"]
     ),
     "ERA-Interim": None,
     "JRA-25": None,
