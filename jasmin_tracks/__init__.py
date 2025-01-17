@@ -99,6 +99,15 @@ datasets = {
     "ERA-Interim": None,
     "JRA-25": None,
     "JRA-55": None,
+    "JRA-3Q": TrackDataset(
+        fixed_path=huracan_project_path / "JRA3Q/TC/",
+        extra_path="{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/",
+        filename="tr_trs_pos.2day_addT63vor_addmslp_addw925_addw10m.new",
+        variable_names=[
+            f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+        ]
+        + ["mslp", "vmax925hPa", "vmax10m"],
+    ),
     "MERRA2": None,
 
     # Longer reanalyses
