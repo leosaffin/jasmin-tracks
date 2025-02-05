@@ -207,9 +207,9 @@ datasets = {
             "vmax925hPa",
             "vmax10m",
             "mslp",
-            "TL",
-            "TU",
-            "B",
+            "cps_vtl",
+            "cps_vtu",
+            "cps_b",
         ],
     ),
     "ECMWF_Extended_Ensemble": TrackDataset(
@@ -227,9 +227,9 @@ datasets = {
             "vmax925hPa",
             "vmax10m",
             "mslp",
-            "TL",
-            "TU",
-            "B",
+            "cps_vtl",
+            "cps_vtu",
+            "cps_b",
         ],
     ),
 
@@ -262,9 +262,9 @@ matched_tracks = {
             "vmax925hPa",
             "vmax10m",
             "mslp",
-            "TL",
-            "TU",
-            "B",
+            "cps_vtl",
+            "cps_vtu",
+            "cps_b",
         ],
     )
 }
