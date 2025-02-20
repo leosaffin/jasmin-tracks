@@ -122,6 +122,11 @@ datasets["ERA5"] = TrackDataset(
             filename=_filename + "nolat.tcident.new",
             variable_names=_variable_names,
         ),
+        "matches": dict(
+            extra_path="MATCH-{hemisphere}/",
+            filename="ERA5_{year}_match_yes.dat",
+            variable_names=_variable_names,
+        )
     },
 )
 
@@ -160,7 +165,7 @@ datasets["ERA20C"] = TrackDataset(
 )
 datasets["CERA20C"] = TrackDataset(
     fixed_path=huracan_project_path / "CERA20C/",
-    extra_path="{hemisphere}/CERA20C_VOR_{year:04d}_{ensemble_member}_vertavg_T63/",
+    extra_path="{hemisphere}/CERA20C_VOR_{year}_{ensemble_member}_vertavg_T63/",
     filename=_filename + "_addmslpavg_mslpdiff.new",
     variable_names=_variable_names + ["mslpavg", "mslpdiff"],
     alternatives={
@@ -177,7 +182,7 @@ _variable_names = [
 ] + ["vmax925hPa", "vmax10m", "mslp", "precip"]
 datasets["20CRv3"] = TrackDataset(
     fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
-    extra_path="NOAA-20CRv3_VOR_VERTAVG_{month_range}{year:04d}_{ensemble_member:03d}_T63/",
+    extra_path="NOAA-20CRv3_VOR_VERTAVG_{month_range}{year}_{ensemble_member:03d}_T63/",
     filename=_filename,
     variable_names=_variable_names,
     alternatives={
