@@ -82,9 +82,13 @@ class TrackDataset:
         return parse(self.full_path, filename).named
 
     def select_alternative(self, alternative):
-        alternative = self.alternatives[alternative]
-        for key in alternative:
-            self.__setattr__(key, alternative[key])
+        alternative = self.alternatives[alternative].copy()
+
+        for key in ["fixed_path", "extra_path", "filename", "variable_names"]:
+            if key not in alternative:
+                alternative[key] = getattr(self, key)
+
+        return TrackDataset(**alternative)
 
     def __str__(self):
         return (
