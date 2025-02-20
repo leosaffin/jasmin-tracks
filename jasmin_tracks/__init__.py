@@ -134,25 +134,54 @@ datasets["JRA3Q"] = TrackDataset(
         ),
         "tcident": dict(
             filename=_filename + ".tcident.new",
+            variable_names=_variable_names,
         ),
     },
 )
 
 # Longer reanalyses
+_filename = "tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m"
 datasets["ERA20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "ERA20C/NH/",
+    fixed_path=huracan_project_path / "ERA20C/{hemisphere}/",
     extra_path="ERA20C_VOR_{year:04d}_vertavg_T63/",
-    filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
+    filename=_filename + "_addmslpavg_mslpdiff.new",
+    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
+    alternatives={
+        "tcident": dict(
+            filename=_filename + ".tcident.new",
+            variable_names=_variable_names,
+        ),
+    },
+
 )
 datasets["CERA20C"] = TrackDataset(
     fixed_path=huracan_project_path / "CERA20C/",
     extra_path="{hemisphere}/CERA20C_VOR_{year:04d}_{ensemble_member}_vertavg_T63/",
-    filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
+    filename=_filename + "_addmslpavg_mslpdiff.new",
+    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
+    alternatives={
+        "tcident": dict(
+            filename=_filename + ".tcident.new",
+            variable_names=_variable_names,
+        ),
+    }
 )
+
+_filename = "tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip"
+_variable_names = [
+    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["vmax925hPa", "vmax10m", "mslp", "precip"]
 datasets["20CRv3"] = TrackDataset(
     fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
-    extra_path="NOAA-20CRv3_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63/",
-    filename="tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip.tcident",
+    extra_path="NOAA-20CRv3_VOR_VERTAVG_{month_range}{year:04d}_{ensemble_member:03d}_T63/",
+    filename=_filename,
+    variable_names=_variable_names,
+    alternatives={
+        "tcident": dict(
+            filename=_filename + ".tcident.new",
+            variable_names=_variable_names,
+        ),
+    }
 )
 
 # Climate model simulations
