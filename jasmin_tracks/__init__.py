@@ -94,201 +94,203 @@ class TrackDataset:
 
 
 # If .new is in the filename, then the track indices have been converted to timestamps
-datasets = {
-    # Modern era reanalyses
-    "ERA5": TrackDataset(
-        fixed_path=huracan_project_path / "ERA5",
-        extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
-        filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind_addmslpavg_mslpdiff.new",
-        variable_names=[
-            f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-        ] + ["mslp", "vmax925hPa", "vmax10m", "mslpavg", "mslpdiff"],
-        alternatives={
-            "nolat-tcident": dict(
-                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart",
-                variable_names=[
-                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-                ] + ["mslp", "vmax925hPa", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"],
-            ),
-            "nolat-tcident-dwcore": dict(
-                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart.dwcore.new",
-                variable_names=[
-                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-                ] + ["mslp", "vmax925hPa", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"],
-            ),
-            "tcident": dict(
-                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.new",
-                variable_names=[
-                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-                ] + ["mslp", "vmax925hPa", "vmax10m"],
-            ),
-        },
-    ),
-    "JRA3Q": TrackDataset(
-        fixed_path=huracan_project_path / "JRA3Q/TC/",
-        extra_path="{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/",
-        filename="tr_trs_pos.2day_addT63vor_addmslp_addw925_addw10m.new",
-        variable_names=[
-            f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-        ]
-        + ["mslp", "vmax925hPa", "vmax10m"],
-    ),
+datasets = dict()
+# Modern era reanalyses
+_filename = "tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind"
+_variable_names = [
+    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["mslp", "vmax925hPa", "vmax10m"]
+datasets["ERA5"] = TrackDataset(
+    fixed_path=huracan_project_path / "ERA5",
+    extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
+    filename=_filename + "_addmslpavg_mslpdiff.new",
+    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
+    alternatives={
+        "nolat-tcident": dict(
+            filename=_filename + "nolat.tcident.hart",
+            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
+        ),
+        "nolat-tcident-dwcore": dict(
+            filename=_filename + "nolat.tcident.hart.dwcore.new",
+            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
+        ),
+        "tcident": dict(
+            filename=_filename + "nolat.tcident.new",
+            variable_names=_variable_names,
+        ),
+    },
+)
 
-    # Longer reanalyses
-    "ERA-20C": TrackDataset(
-        fixed_path=huracan_project_path / "ERA20C/NH/",
-        extra_path="ERA20C_VOR_{year:04d}_vertavg_T63/",
-        filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
-    ),
-    "CERA-20C": TrackDataset(
-        fixed_path=huracan_project_path / "CERA20C/",
-        extra_path="{hemisphere}/CERA20C_VOR_{year:04d}_{ensemble_member}_vertavg_T63/",
-        filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
-    ),
-    "20CRv3": TrackDataset(
-        fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
-        extra_path="NOAA-20CRv3_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63/",
-        filename="tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip.tcident",
-    ),
+_filename = "tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m"
+datasets["JRA3Q"] = TrackDataset(
+    fixed_path=huracan_project_path / "JRA3Q/TC/",
+    extra_path="{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/",
+    filename=_filename + ".new",
+    variable_names=_variable_names,
+    alternatives={
+        "nolat-tcident": dict(
+            filename=_filename + ".nolat.tcident.hart.new",
+            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
+        ),
+        "tcident": dict(
+            filename=_filename + ".tcident.new",
+        ),
+    },
+)
 
-    # Climate model simulations
-    "CMIP6": TrackDataset(
-        fixed_path=huracan_project_path / "CMIP6/TC/CMIP6",
-        extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}"
-                   "{model_variant}_{experiment}_{variant}_{grid}_VOR850_jan-dec{year}_T42/",
-        filename="tr_trs_pos.2day_addvorT63_addwind.tcident.new.nc",
-    ),
-    "HighResMip": TrackDataset(
-        fixed_path=huracan_project_path / "HiResMIP/HiResMIP",
-        extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}/"
-                   "{model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63",
-        filename="tr_trs_pos.2day_addvorT63_addwind_addmslp.tcident.new.nc",
-    ),
-    "SPHINX": TrackDataset(
-        fixed_path=huracan_project_path / "SPHINX/TC/SPHINX/",
-        # Physics = "BASE" or "STOC"
-        # Experiment = "PRESENT" or "FUTURE"
-        # Hemisphere = "-SH" or "" for NH
-        extra_path="T{spectral_resolution}-ATMOS-{physics}-{experiment}{hemisphere}/"
-                   "{runid}_{year}_VOR_VERTAVG_T63/",
-        filename="{tr_or_ff}_trs_pos.addT63vor_add925w_add10w_addmslp_addprecip.tcident.hart",
-        variable_names=[f"vorticity_{n+1}" for n in range(6)] + ["v925hPa", "v10m", "mslp", "precip", "TL", "TU", "B"],
-    ),
-    # "d4PDF": TrackDataset(
-    #     fixed_path=huracan_project_path / "d4pdf/TC",
-    #     extra_path="{experiment}/HPB_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63"
-    #                "{HFB_VOR_VERTAVG_jan-dec{year}_{:03d}_T63/ or "
-    #                "HFB_VOR_VERTAVG_jan-dec{year}_HFB_4k_{??}_{:03d}_T63/}",
-    #     # "HPB_VOR_VERTAVG_jul-jun20092010_100_T63"
-    #     filename="tr_trs_pos.2day_addT63vor_add925w_add10w_addmslp_addprecip.tcident.new.nc"
-    # ),
-    "d4PDF": None,
-    "CMIP6-HighResMip": None,
-    "nextGEMS": None,
-    "N1280-UM": None,
+# Longer reanalyses
+datasets["ERA20C"] = TrackDataset(
+    fixed_path=huracan_project_path / "ERA20C/NH/",
+    extra_path="ERA20C_VOR_{year:04d}_vertavg_T63/",
+    filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
+)
+datasets["CERA20C"] = TrackDataset(
+    fixed_path=huracan_project_path / "CERA20C/",
+    extra_path="{hemisphere}/CERA20C_VOR_{year:04d}_{ensemble_member}_vertavg_T63/",
+    filename="tr_trs_pos.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new.nc",
+)
+datasets["20CRv3"] = TrackDataset(
+    fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
+    extra_path="NOAA-20CRv3_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63/",
+    filename="tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip.tcident",
+)
 
-    # Seasonal prediction ensembles
-    "GloSea5": TrackDataset(
-        fixed_path=huracan_project_path / "GLOSEA5/TC/GLOSEA5",
-        extra_path="",
-        filename="",
-    ),
-    "GloSea6": TrackDataset(
-        fixed_path=huracan_project_path / "GLOSEA6/TC",
-        # Broken links beyond here
-        extra_path="GLOSEA6-{experiment}/",
-        filename=""
-    ),
-    "ECMWF_coupled_hindcasts": TrackDataset(
-        fixed_path=huracan_project_path / "ANTJE",
-        extra_path="{experiment_id}/" + _YYYYMMDDHH + "/"
-                   "S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat",
-        filename="tr_trs_{pos_or_neg}.2day_addvorT63_addwind850_addmslp.new",
-    ),
-    "C3S": None,
+# Climate model simulations
+datasets["CMIP6"] = TrackDataset(
+    fixed_path=huracan_project_path / "CMIP6/TC/CMIP6",
+    extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}"
+               "{model_variant}_{experiment}_{variant}_{grid}_VOR850_jan-dec{year}_T42/",
+    filename="tr_trs_pos.2day_addvorT63_addwind.tcident.new.nc",
+)
+datasets["HighResMip"] = TrackDataset(
+    fixed_path=huracan_project_path / "HiResMIP/HiResMIP",
+    extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}/"
+               "{model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63",
+    filename="tr_trs_pos.2day_addvorT63_addwind_addmslp.tcident.new.nc",
+)
+datasets["SPHINX"] = TrackDataset(
+    fixed_path=huracan_project_path / "SPHINX/TC/SPHINX/",
+    # Physics = "BASE" or "STOC"
+    # Experiment = "PRESENT" or "FUTURE"
+    # Hemisphere = "-SH" or "" for NH
+    extra_path="T{spectral_resolution}-ATMOS-{physics}-{experiment}{hemisphere}/"
+               "{runid}_{year}_VOR_VERTAVG_T63/",
+    filename="{tr_or_ff}_trs_pos.addT63vor_add925w_add10w_addmslp_addprecip.tcident.hart",
+    variable_names=[f"vorticity_{n+1}" for n in range(6)] + ["v925hPa", "v10m", "mslp", "precip", "TL", "TU", "B"],
+)
+# "d4PDF": TrackDataset(
+#     fixed_path=huracan_project_path / "d4pdf/TC",
+#     extra_path="{experiment}/HPB_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63"
+#                "{HFB_VOR_VERTAVG_jan-dec{year}_{:03d}_T63/ or "
+#                "HFB_VOR_VERTAVG_jan-dec{year}_HFB_4k_{??}_{:03d}_T63/}",
+#     # "HPB_VOR_VERTAVG_jul-jun20092010_100_T63"
+#     filename="tr_trs_pos.2day_addT63vor_add925w_add10w_addmslp_addprecip.tcident.new.nc"
+# ),
+datasets["d4PDF"] = None,
+datasets["HighResMip"] = None,
+datasets["nextGEMS"] = None,
+datasets["N1280-UM"] = None,
 
-    # NWP
-    # Year/Month/Day/Hour refer to initialisation time
-    "TIGGE": TrackDataset(
-        fixed_path=huracan_project_path / "TIGGE/TC/TIGGE",
-        extra_path="{model}/Y{year:04d}/" + f"{_YYYYMMDDHH}/" +
-                   "{model}_VOR_" + f"{_YYYYMMDDHH}" + "_{ensemble_member}",
-        filename="tr_trs_pos.2day.addfullvor_addavgvor_addmslp_addw10m.new.gz",
-    ),
-    "ECMWF_hindcasts": TrackDataset(
-        fixed_path=huracan_project_path / "ECMWF-HINDCASTS/TC/",
-        extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
-                   f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" +
-                   "_{ensemble_member}/",
-        filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.highres.hart.new",
-        variable_names=[
-            "vorticity850hPa",
-            "vorticity700hPa",
-            "vorticity500hPa",
-            "vorticity400hPa",
-            "vorticity300hPa",
-            "vorticity200hPa",
-            "vmax925hPa",
-            "vmax10m",
-            "mslp",
-            "cps_vtl",
-            "cps_vtu",
-            "cps_b",
-        ],
-    ),
-    "ECMWF_Extended_Ensemble": TrackDataset(
-        fixed_path=huracan_project_path / "EPSEXT100/TC/",
-        extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
-        filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.hart.new",
-        variable_names=[
-            "vorticity850hPa",
-            "vorticity700hPa",
-            "vorticity600hPa",
-            "vorticity500hPa",
-            "vorticity400hPa",
-            "vorticity300hPa",
-            "vorticity200hPa",
-            "vmax925hPa",
-            "vmax10m",
-            "mslp",
-            "cps_vtl",
-            "cps_vtu",
-            "cps_b",
-        ],
-    ),
+# Seasonal prediction ensembles
+datasets["GloSea5"] = TrackDataset(
+    fixed_path=huracan_project_path / "GLOSEA5/TC/GLOSEA5",
+    extra_path="",
+    filename="",
+)
+datasets["GloSea6"] = TrackDataset(
+    fixed_path=huracan_project_path / "GLOSEA6/TC",
+    # Broken links beyond here
+    extra_path="GLOSEA6-{experiment}/",
+    filename=""
+)
+datasets["ECMWF_coupled_hindcasts"] = TrackDataset(
+    fixed_path=huracan_project_path / "ANTJE",
+    extra_path="{experiment_id}/" + _YYYYMMDDHH + "/"
+               "S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat",
+    filename="tr_trs_{pos_or_neg}.2day_addvorT63_addwind850_addmslp.new",
+)
+datasets["C3S"] = None,
 
-    # Decadal Prediction Systems
-    "DePreSys4": TrackDataset(
-        fixed_path=huracan_project_path / "DePreSys4/TC/DePreSys4",
-        extra_path="DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}",
-        filename="tr_trs_pos.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new",
-    ),
-}
+# NWP
+# Year/Month/Day/Hour refer to initialisation time
+datasets["TIGGE"] = TrackDataset(
+    fixed_path=huracan_project_path / "TIGGE/TC/TIGGE",
+    extra_path="{model}/Y{year:04d}/" + f"{_YYYYMMDDHH}/" +
+               "{model}_VOR_" + f"{_YYYYMMDDHH}" + "_{ensemble_member}",
+    filename="tr_trs_pos.2day.addfullvor_addavgvor_addmslp_addw10m.new.gz",
+)
+datasets["ECMWF_hindcasts"] = TrackDataset(
+    fixed_path=huracan_project_path / "ECMWF-HINDCASTS/TC/",
+    extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
+               f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" +
+               "_{ensemble_member}/",
+    filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.highres.hart.new",
+    variable_names=[
+        "vorticity850hPa",
+        "vorticity700hPa",
+        "vorticity500hPa",
+        "vorticity400hPa",
+        "vorticity300hPa",
+        "vorticity200hPa",
+        "vmax925hPa",
+        "vmax10m",
+        "mslp",
+        "cps_vtl",
+        "cps_vtu",
+        "cps_b",
+    ],
+)
+datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
+    fixed_path=huracan_project_path / "EPSEXT100/TC/",
+    extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
+    filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.hart.new",
+    variable_names=[
+        "vorticity850hPa",
+        "vorticity700hPa",
+        "vorticity600hPa",
+        "vorticity500hPa",
+        "vorticity400hPa",
+        "vorticity300hPa",
+        "vorticity200hPa",
+        "vmax925hPa",
+        "vmax10m",
+        "mslp",
+        "cps_vtl",
+        "cps_vtu",
+        "cps_b",
+    ],
+)
 
-matched_tracks = {
-    "ECMWF_hindcasts": TrackDataset(
-        fixed_path=datasets["ECMWF_hindcasts"].fixed_path,
-        extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/" +
-                   "MATCH_{hemisphere}_ERA5_highres/",
-        filename="trmatch_cntl_tr{storm_number:04d}",
-    ),
-    "ECMWF_Extended_Ensemble": TrackDataset(
-        fixed_path=huracan_project_path / "EPSEXT100/TC/",
-        extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/" + "MATCH_{hemisphere}/",
-        filename="trmatch_cntl_tr{storm_number:04d}",
-        variable_names=[
-            "vorticity850hPa",
-            "vorticity700hPa",
-            "vorticity500hPa",
-            "vorticity400hPa",
-            "vorticity300hPa",
-            "vorticity200hPa",
-            "vmax925hPa",
-            "vmax10m",
-            "mslp",
-            "cps_vtl",
-            "cps_vtu",
-            "cps_b",
-        ],
-    )
-}
+# Decadal Prediction Systems
+datasets["DePreSys4"] = TrackDataset(
+    fixed_path=huracan_project_path / "DePreSys4/TC/DePreSys4",
+    extra_path="DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}",
+    filename="tr_trs_pos.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new",
+)
+
+# matched_tracks = {
+# "ECMWF_hindcasts": TrackDataset(
+#     fixed_path=datasets["ECMWF_hindcasts"].fixed_path,
+#     extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/" +
+#                "MATCH_{hemisphere}_ERA5_highres/",
+#     filename="trmatch_cntl_tr{storm_number:04d}",
+# )
+# "ECMWF_Extended_Ensemble": TrackDataset(
+#     fixed_path=huracan_project_path / "EPSEXT100/TC/",
+#     extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/" + "MATCH_{hemisphere}/",
+#     filename="trmatch_cntl_tr{storm_number:04d}",
+#     variable_names=[
+#         "vorticity850hPa",
+#         "vorticity700hPa",
+#         "vorticity500hPa",
+#         "vorticity400hPa",
+#         "vorticity300hPa",
+#         "vorticity200hPa",
+#         "vmax925hPa",
+#         "vmax10m",
+#         "mslp",
+#         "cps_vtl",
+#         "cps_vtu",
+#         "cps_b",
+#     ],
+# )}
