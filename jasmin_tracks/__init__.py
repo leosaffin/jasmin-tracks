@@ -55,11 +55,14 @@ def _format_string_by_keyword_subset(format_string, keywords):
 
 
 class TrackDataset:
-    def __init__(self, fixed_path, extra_path, filename, variable_names=None):
+    def __init__(
+        self, fixed_path, extra_path, filename, variable_names=None, alternatives=None
+    ):
         self.fixed_path = pathlib.Path(fixed_path)
         self.extra_path = extra_path
         self.filename = filename
         self.variable_names = variable_names
+        self.alternatives = alternatives
 
     @property
     def full_path(self):
@@ -78,6 +81,11 @@ class TrackDataset:
     def file_details(self, filename):
         return parse(self.full_path, filename).named
 
+    def select_alternative(self, alternative):
+        alternative = self.alternatives[alternative]
+        for key in alternative:
+            self.__setattr__(key, alternative[key])
+
     def __str__(self):
         return (
             f"{self.full_path}\n"
@@ -91,15 +99,32 @@ datasets = {
     "ERA5": TrackDataset(
         fixed_path=huracan_project_path / "ERA5",
         extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
-        filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.new",
+        filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind_addmslpavg_mslpdiff.new",
         variable_names=[
-                           f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-                       ] + ["mslp", "vmax925hPa", "vmax10m"]
+            f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+        ] + ["mslp", "vmax925hPa", "vmax10m", "mslpavg", "mslpdiff"],
+        alternatives={
+            "nolat-tcident": dict(
+                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart",
+                variable_names=[
+                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+                ] + ["mslp", "vmax925hPa", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"],
+            ),
+            "nolat-tcident-dwcore": dict(
+                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart.dwcore.new",
+                variable_names=[
+                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+                ] + ["mslp", "vmax925hPa", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"],
+            ),
+            "tcident": dict(
+                filename="tr_trs_pos.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.new",
+                variable_names=[
+                    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+                ] + ["mslp", "vmax925hPa", "vmax10m"],
+            ),
+        },
     ),
-    "ERA-Interim": None,
-    "JRA-25": None,
-    "JRA-55": None,
-    "JRA-3Q": TrackDataset(
+    "JRA3Q": TrackDataset(
         fixed_path=huracan_project_path / "JRA3Q/TC/",
         extra_path="{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/",
         filename="tr_trs_pos.2day_addT63vor_addmslp_addw925_addw10m.new",
@@ -108,7 +133,6 @@ datasets = {
         ]
         + ["mslp", "vmax925hPa", "vmax10m"],
     ),
-    "MERRA2": None,
 
     # Longer reanalyses
     "ERA-20C": TrackDataset(
