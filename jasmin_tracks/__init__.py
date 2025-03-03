@@ -285,11 +285,19 @@ _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
 _variable_names = [
     f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
 ] + ["vmax925hPa", "vmax10m", "mslp"]
+_extra_path = "Y{model_year:04d}/" + f"{_YYYYMMDDHH}/"
 datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
     fixed_path=huracan_project_path / "EPSEXT100/TC/",
-    extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
+    extra_path=_extra_path + f"EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}/",
     filename=_filename,
     variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
+    alternatives={
+        "matches": dict(
+            extra_path=_extra_path + "MATCH_{hemisphere}/",
+            filename="trmatch_cntl_tr{storm_number:04d}",
+            variable_names=["vmax925hPa", "vmax10m", "mslp"],
+        ),
+    }
 )
 
 # Decadal Prediction Systems
@@ -299,25 +307,6 @@ datasets["DePreSys4"] = TrackDataset(
     filename="tr_trs_pos.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new",
 )
 
-# "ECMWF_Extended_Ensemble": TrackDataset(
-#     fixed_path=huracan_project_path / "EPSEXT100/TC/",
-#     extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/" + "MATCH_{hemisphere}/",
-#     filename="trmatch_cntl_tr{storm_number:04d}",
-#     variable_names=[
-#         "vorticity850hPa",
-#         "vorticity700hPa",
-#         "vorticity500hPa",
-#         "vorticity400hPa",
-#         "vorticity300hPa",
-#         "vorticity200hPa",
-#         "vmax925hPa",
-#         "vmax10m",
-#         "mslp",
-#         "cps_vtl",
-#         "cps_vtu",
-#         "cps_b",
-#     ],
-# )}
 
 # To add
 # CANARI
