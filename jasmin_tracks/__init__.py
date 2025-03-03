@@ -281,25 +281,15 @@ datasets["ECMWF_hindcasts"] = TrackDataset(
     }
 )
 
+_filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new",
+_variable_names = [
+    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["vmax925hPa", "vmax10m", "mslp"]
 datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
     fixed_path=huracan_project_path / "EPSEXT100/TC/",
     extra_path="Y{model_year:04d}/" + f"{_YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_" + "{ensemble_member}",
-    filename="tr_trs_pos.2day_addvorT63_addwinds_addmslp.hart.new",
-    variable_names=[
-        "vorticity850hPa",
-        "vorticity700hPa",
-        "vorticity600hPa",
-        "vorticity500hPa",
-        "vorticity400hPa",
-        "vorticity300hPa",
-        "vorticity200hPa",
-        "vmax925hPa",
-        "vmax10m",
-        "mslp",
-        "cps_vtl",
-        "cps_vtu",
-        "cps_b",
-    ],
+    filename=_filename,
+    variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
 )
 
 # Decadal Prediction Systems
