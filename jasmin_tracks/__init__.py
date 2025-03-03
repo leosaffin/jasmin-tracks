@@ -281,7 +281,7 @@ datasets["ECMWF_hindcasts"] = TrackDataset(
     }
 )
 
-_filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new",
+_filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
 _variable_names = [
     f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
 ] + ["vmax925hPa", "vmax10m", "mslp"]
