@@ -275,7 +275,7 @@ datasets["ECMWF_hindcasts"] = TrackDataset(
         "matches": dict(
             extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/" +
                        "MATCH_{hemisphere}_ERA5_highres/",
-            variable_names=_variable_names,
+            variable_names=["vmax925hPa", "vmax10m", "mslp"],
             filename="trmatch_cntl_tr{ibtracs_id:04d}"
         ),
     }
