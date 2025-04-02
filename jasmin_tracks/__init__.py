@@ -241,12 +241,41 @@ datasets["GloSea6"] = TrackDataset(
     extra_path="GLOSEA6-{experiment}/",
     filename=""
 )
-datasets["ECMWF_coupled_hindcasts"] = TrackDataset(
+
+datasets["ASF-20C"] = TrackDataset(
     fixed_path=huracan_project_path / "ANTJE",
-    extra_path="{experiment_id}/" + _YYYYMMDDHH + "/"
-               "S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat",
-    filename="tr_trs_{pos_or_neg}.2day_addvorT63_addwind850_addmslp.new",
+    extra_path="{experiment_id}/" + _YYYYMMDDHH + "/S2S_VOR_VERTAVG_" + _YYYYMMDDHH + "_{ensemble_member}_T63/",
+    filename="tr_trs_pos.2day_addvorT63_addwinds925_addwinds10m_addmslp.new",
+    variable_names=[
+        f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 300, 200]
+    ] + ["vmax925hPa", "vmax10m", "mslp"],
 )
+
+_extra_path = _YYYYMMDDHH + "/S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat/"
+_filename = "tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.new"
+_variable_names = [
+    f"vorticity{plev}hPa" for plev in [850, 500, 200]
+] + ["vmax850hPa", "mslp"]
+datasets["CSF-20C"] = TrackDataset(
+    fixed_path=huracan_project_path / "ANTJE/guh4",
+    extra_path=_extra_path,
+    filename=_filename + ".gz",
+    variable_names=_variable_names,
+)
+
+datasets["SEAS5-20C"] = TrackDataset(
+    fixed_path=huracan_project_path / "ANTJE/guxf",
+    extra_path=_extra_path,
+    filename=_filename,
+    variable_names=_variable_names,
+    alternatives={
+        "nolat-tcident": dict(
+            filename=_filename.replace(".new", "nolat.tcident.hart.new"),
+            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
+        ),
+    }
+)
+
 datasets["C3S"] = None,
 
 # NWP
