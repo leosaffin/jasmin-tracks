@@ -270,7 +270,7 @@ datasets["SEAS5-20C"] = TrackDataset(
     variable_names=_variable_names,
     alternatives={
         "nolat-tcident": dict(
-            filename=_filename.replace(".new", "nolat.tcident.hart.new"),
+            filename=_filename.replace(".new", ".nolat.tcident.hart.new"),
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
     }

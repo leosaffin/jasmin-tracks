@@ -18,7 +18,7 @@ def get_tracks(dataset_name, alternative=None, **kwargs):
 
     all_tracks = []
     current_track_id = 1
-    for n, fname in tqdm(enumerate(all_files)):
+    for n, fname in tqdm(enumerate(all_files), total=len(all_files)):
         tracks = huracanpy.load(str(fname), source="TRACK", variable_names=dataset.variable_names)
 
         # Reindex track_ids
@@ -57,7 +57,7 @@ def gather_vorticity_profile(tracks):
     """
     plevs = [
         float(result.named["n"]) for result in
-        [parse("vorticity{n}hPa", var) for var in tracks.variable_names]
+        [parse("vorticity{n}hPa", var) for var in tracks]
         if result is not None
     ]
 
