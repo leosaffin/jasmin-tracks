@@ -119,7 +119,7 @@ datasets["ERA5"] = TrackDataset(
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
         "tcident": dict(
-            filename=_filename + "nolat.tcident.new",
+            filename=_filename + ".tcident.new",
             variable_names=_variable_names,
         ),
         "matches": dict(
