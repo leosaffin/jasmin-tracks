@@ -57,7 +57,7 @@ def gather_vorticity_profile(tracks):
     """
     plevs = [
         float(result.named["n"]) for result in
-        [parse("vorticity{n}hPa", var) for var in tracks.variable_names]
+        [parse("vorticity{n}hPa", var) for var in tracks]
         if result is not None
     ]
 
