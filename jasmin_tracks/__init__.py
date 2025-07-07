@@ -111,11 +111,11 @@ datasets["ERA5"] = TrackDataset(
     variable_names=_variable_names + ["mslpavg", "mslpdiff"],
     alternatives={
         "nolat-tcident": dict(
-            filename=_filename + "nolat.tcident.hart",
+            filename=_filename + ".nolat.tcident.hart",
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
         "nolat-tcident-dwcore": dict(
-            filename=_filename + "nolat.tcident.hart.dwcore.new",
+            filename=_filename + ".nolat.tcident.hart.dwcore.new",
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
         "tcident": dict(
