@@ -7,7 +7,7 @@ from parse import parse
 # Paths to data on JASMIN
 # From https://research.reading.ac.uk/huracan/science/data/
 huracan_project_path = pathlib.Path(
-    "/gws/nopw/j04/huracan/data/tracks/tropical_cyclones/TRACK/"
+    "/gws/ssde/j25b/huracan/data/tracks/tropical_cyclones/TRACK/"
 )
 
 # Shorthands for defining paths for each dataset
