@@ -110,6 +110,10 @@ datasets["ERA5"] = TrackDataset(
     filename=_filename + "_addmslpavg_mslpdiff.new",
     variable_names=_variable_names + ["mslpavg", "mslpdiff"],
     alternatives={
+        "nolat-nwc-tcident": dict(
+            filename=_filename + ".nolat.nwc.tcident.hart.new",
+            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"]
+        ),
         "nolat-tcident": dict(
             filename=_filename + ".nolat.tcident.hart",
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
