@@ -207,7 +207,7 @@ datasets["CMIP6"] = TrackDataset(
 datasets["HighResMip"] = TrackDataset(
     fixed_path=huracan_project_path / "HiResMIP/HiResMIP",
     extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}/"
-               "{model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63",
+               "{model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63/",
     filename="tr_trs_pos.2day_addvorT63_addwind_addmslp.tcident.new.nc",
 )
 datasets["SPHINX"] = TrackDataset(
@@ -287,8 +287,8 @@ datasets["C3S"] = None,
 datasets["TIGGE"] = TrackDataset(
     fixed_path=huracan_project_path / "TIGGE/TC/TIGGE",
     extra_path="{model}/Y{year:04d}/" + f"{_YYYYMMDDHH}/" +
-               "{model}_VOR_" + f"{_YYYYMMDDHH}" + "_{ensemble_member}",
-    filename="tr_trs_pos.2day.addfullvor_addavgvor_addmslp_addw10m.new.gz",
+               "{model}_VOR_" + f"{_YYYYMMDDHH}" + "_{ensemble_member}/",
+    filename="tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp.new",
 )
 
 _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new"
@@ -336,7 +336,7 @@ datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
 # Decadal Prediction Systems
 datasets["DePreSys4"] = TrackDataset(
     fixed_path=huracan_project_path / "DePreSys4/TC/DePreSys4",
-    extra_path="DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}",
+    extra_path="DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}/",
     filename="tr_trs_pos.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new",
 )
 
