@@ -102,8 +102,8 @@ datasets = dict()
 # Modern era reanalyses
 _filename = "tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind"
 _variable_names = [
-    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["mslp", "vmax925hPa", "vmax10m"]
+    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["mslp", "vmax925hpa", "vmax10m"]
 datasets["ERA5"] = TrackDataset(
     fixed_path=huracan_project_path / "ERA5",
     extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
@@ -182,8 +182,8 @@ datasets["CERA20C"] = TrackDataset(
 
 _filename = "tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip"
 _variable_names = [
-    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["vmax925hPa", "vmax10m", "mslp", "precip"]
+    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["vmax925hpa", "vmax10m", "mslp", "precip"]
 datasets["20CRv3"] = TrackDataset(
     fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
     extra_path="NOAA-20CRv3_VOR_VERTAVG_{month_range}{year}_{ensemble_member:03d}_T63/",
@@ -218,7 +218,7 @@ datasets["SPHINX"] = TrackDataset(
     extra_path="T{spectral_resolution}-ATMOS-{physics}-{experiment}{hemisphere}/"
                "{runid}_{year}_VOR_VERTAVG_T63/",
     filename="{tr_or_ff}_trs_pos.addT63vor_add925w_add10w_addmslp_addprecip.tcident.hart",
-    variable_names=[f"vorticity_{n+1}" for n in range(6)] + ["v925hPa", "v10m", "mslp", "precip", "TL", "TU", "B"],
+    variable_names=[f"vorticity_{n+1}" for n in range(6)] + ["v925hpa", "v10m", "mslp", "precip", "TL", "TU", "B"],
 )
 # "d4PDF": TrackDataset(
 #     fixed_path=huracan_project_path / "d4pdf/TC",
@@ -251,15 +251,15 @@ datasets["ASF-20C"] = TrackDataset(
     extra_path="{experiment_id}/" + _YYYYMMDDHH + "/S2S_VOR_VERTAVG_" + _YYYYMMDDHH + "_{ensemble_member}_T63/",
     filename="tr_trs_pos.2day_addvorT63_addwinds925_addwinds10m_addmslp.new",
     variable_names=[
-        f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 300, 200]
-    ] + ["vmax925hPa", "vmax10m", "mslp"],
+        f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 300, 200]
+    ] + ["vmax925hpa", "vmax10m", "mslp"],
 )
 
 _extra_path = _YYYYMMDDHH + "/S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat/"
 _filename = "tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.new"
 _variable_names = [
-    f"vorticity{plev}hPa" for plev in [850, 500, 200]
-] + ["vmax850hPa", "mslp"]
+    f"vorticity{plev}hpa" for plev in [850, 500, 200]
+] + ["vmax850hpa", "mslp"]
 datasets["CSF-20C"] = TrackDataset(
     fixed_path=huracan_project_path / "ANTJE/guh4",
     extra_path=_extra_path,
@@ -293,8 +293,8 @@ datasets["TIGGE"] = TrackDataset(
 
 _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new"
 _variable_names = [
-    f"vorticity{plev}hPa" for plev in [850, 700, 500, 400, 300, 200]
-] + ["vmax925hPa", "vmax10m", "mslp"]
+    f"vorticity{plev}hpa" for plev in [850, 700, 500, 400, 300, 200]
+] + ["vmax925hpa", "vmax10m", "mslp"]
 # For matched tracks, track ID in file ranges from 0-11.
 # 0 is analysis. 1 is control. 2-11 are ensemble members
 datasets["ECMWF_hindcasts"] = TrackDataset(
@@ -308,7 +308,7 @@ datasets["ECMWF_hindcasts"] = TrackDataset(
         "matches": dict(
             extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/" +
                        "MATCH_{hemisphere}_ERA5_highres/",
-            variable_names=["vmax925hPa", "vmax10m", "mslp"],
+            variable_names=["vmax925hpa", "vmax10m", "mslp"],
             filename="trmatch_cntl_tr{ibtracs_id:04d}"
         ),
     }
@@ -320,13 +320,13 @@ datasets["ECMWF_high-res_hindcasts"] = TrackDataset(
                f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" +
                "_{ensemble_member}/",
     filename="tr_trs_{sign}.2day_addwinds_addmslp.highres.new",
-    variable_names=["vmax925hPa", "vmax10m", "mslp"],
+    variable_names=["vmax925hpa", "vmax10m", "mslp"],
 )
 
 _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
 _variable_names = [
-    f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["vmax925hPa", "vmax10m", "mslp"]
+    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
+] + ["vmax925hpa", "vmax10m", "mslp"]
 _extra_path = "Y{model_year:04d}/" + f"{_YYYYMMDDHH}/"
 datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
     fixed_path=huracan_project_path / "EPSEXT100/TC/",
@@ -337,7 +337,7 @@ datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
         "matches": dict(
             extra_path=_extra_path + "MATCH_{hemisphere}/",
             filename="trmatch_cntl_tr{storm_number:04d}",
-            variable_names=["vmax925hPa", "vmax10m", "mslp"],
+            variable_names=["vmax925hpa", "vmax10m", "mslp"],
         ),
     }
 )
