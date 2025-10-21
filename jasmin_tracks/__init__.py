@@ -314,6 +314,15 @@ datasets["ECMWF_hindcasts"] = TrackDataset(
     }
 )
 
+datasets["ECMWF_high-res_hindcasts"] = TrackDataset(
+    fixed_path=huracan_project_path / "HINDCAST15/TC/",
+    extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
+               f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" +
+               "_{ensemble_member}/",
+    filename="tr_trs_{sign}.2day_addwinds_addmslp.highres.new",
+    variable_names=["vmax925hPa", "vmax10m", "mslp"],
+)
+
 _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
 _variable_names = [
     f"vorticity{plev}hPa" for plev in [850, 700, 600, 500, 400, 300, 200]
@@ -345,4 +354,3 @@ datasets["DePreSys4"] = TrackDataset(
 # CANARI
 # ECMWF-OP-AN
 # ERA20CM
-# HINDCAST15
