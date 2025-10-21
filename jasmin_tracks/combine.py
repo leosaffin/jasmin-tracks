@@ -3,7 +3,6 @@ import warnings
 from parse import parse
 import numpy as np
 from tqdm import tqdm
-import xarray as xr
 
 import huracanpy
 from . import datasets
@@ -14,20 +13,13 @@ def get_tracks(dataset_name, alternative=None, **kwargs):
     if alternative is not None:
         dataset = dataset.select_alternative(alternative)
 
-    all_files = list(dataset.find_files(**kwargs))
+    all_files = sorted(dataset.find_files(**kwargs))
 
     all_tracks = []
-    current_track_id = 1
     for n, fname in tqdm(enumerate(all_files), total=len(all_files)):
-        tracks = huracanpy.load(str(fname), source="TRACK", variable_names=dataset.variable_names)
-
-        # Reindex track_ids
-        track_ids, new_track_ids = np.unique(tracks.track_id, return_inverse=True)
-        tracks["track_id_original"] = ("record", tracks.track_id.values)
-        tracks["track_id"] = ("record", new_track_ids + current_track_id)
-        tracks["track_id"].attrs["cf_role"] = "trajectory_id"
-
-        current_track_id = tracks.track_id.values.max() + 1
+        tracks = huracanpy.load(
+            str(fname), source="TRACK", variable_names=dataset.variable_names
+        )
 
         # Add specific details from files
         try:
@@ -45,7 +37,7 @@ def get_tracks(dataset_name, alternative=None, **kwargs):
         except AttributeError as e:
             warnings.warn(f"Failed to get details from file {fname}\n" + str(e) + "\n")
 
-    all_tracks = xr.concat(all_tracks, dim="record")
+    all_tracks = huracanpy.concat_tracks(all_tracks, keep_track_id=True)
     all_tracks = gather_vorticity_profile(all_tracks)
 
     return all_tracks
