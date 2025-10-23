@@ -53,22 +53,23 @@ def gather_vorticity_profile(tracks):
         if result is not None
     ]
 
-    tracks["pressure"] = ("pressure", plevs)
-    tracks = tracks.set_coords("pressure")
+    if len(plevs) > 0:
+        tracks["pressure"] = ("pressure", plevs)
+        tracks = tracks.set_coords("pressure")
 
-    vorticity = np.zeros([tracks.sizes["record"], tracks.sizes["pressure"]])
-    vorticity_lon = np.zeros_like(vorticity)
-    vorticity_lat = np.zeros_like(vorticity)
-    for n, plev in enumerate(tracks.pressure.values):
-        name = f"vorticity{int(plev)}hpa"
-        vorticity[:, n] = tracks[name].values
-        vorticity_lon[:, n] = tracks[name + "_lon"].values
-        vorticity_lat[:, n] = tracks[name + "_lat"].values
+        vorticity = np.zeros([tracks.sizes["record"], tracks.sizes["pressure"]])
+        vorticity_lon = np.zeros_like(vorticity)
+        vorticity_lat = np.zeros_like(vorticity)
+        for n, plev in enumerate(tracks.pressure.values):
+            name = f"vorticity{int(plev)}hpa"
+            vorticity[:, n] = tracks[name].values
+            vorticity_lon[:, n] = tracks[name + "_lon"].values
+            vorticity_lat[:, n] = tracks[name + "_lat"].values
 
-        tracks = tracks.drop_vars([name, name + "_lon", name + "_lat"])
+            tracks = tracks.drop_vars([name, name + "_lon", name + "_lat"])
 
-    tracks["relative_vorticity"] = (["record", "pressure"], vorticity)
-    tracks["relative_vorticity_lon"] = (["record", "pressure"], vorticity_lon)
-    tracks["relative_vorticity_lat"] = (["record", "pressure"], vorticity_lat)
+        tracks["relative_vorticity"] = (["record", "pressure"], vorticity)
+        tracks["relative_vorticity_lon"] = (["record", "pressure"], vorticity_lon)
+        tracks["relative_vorticity_lat"] = (["record", "pressure"], vorticity_lat)
 
     return tracks
