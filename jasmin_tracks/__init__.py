@@ -13,6 +13,9 @@ huracan_project_path = pathlib.Path(
 # Shorthands for defining paths for each dataset
 _YYYYMMDDHH = "{year:04d}{month:02d}{day:02d}{hour:02d}"
 _YYYYMMDDHH_model = _YYYYMMDDHH.replace("year", "model_year")
+_YYYYMMDDHH_model_leap = _YYYYMMDDHH.replace("year", "model_year").replace(
+    "day", "model_day"
+)
 
 
 def summary():
@@ -79,7 +82,17 @@ class TrackDataset:
         return [str(f) for f in self.fixed_path.glob(extra_path + filename)]
 
     def file_details(self, filename):
-        return parse(self.full_path, filename).named
+        try:
+            return parse(self.full_path, filename).named
+        except AttributeError:
+            # Hindcasts on leap years 29th Feb the days don't match
+            details = parse(
+                self.full_path.replace(_YYYYMMDDHH_model, _YYYYMMDDHH_model_leap),
+                filename
+            ).named
+            del details["model_day"]
+
+            return details
 
     def select_alternative(self, alternative):
         alternative = self.alternatives[alternative].copy()
