@@ -302,6 +302,7 @@ datasets["TIGGE"] = TrackDataset(
     extra_path="{model}/Y{year:04d}/" + f"{_YYYYMMDDHH}/" +
                "{model}_VOR_" + f"{_YYYYMMDDHH}" + "_{ensemble_member}/",
     filename="tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp.new",
+    variable_names=["full_vorticity", "average_vorticity", "mslp"]
 )
 
 _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new"
