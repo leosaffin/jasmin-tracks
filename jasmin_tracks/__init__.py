@@ -165,6 +165,13 @@ datasets["JRA3Q"] = TrackDataset(
     },
 )
 
+datasets["ECMWF_OP_AN"] = TrackDataset(
+    fixed_path=huracan_project_path / "ECMWF-OP-AN",
+    extra_path="{hemisphere}/OP_{time_period}_VOR_VERTAVG_T63",
+    filename="tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp_addw10m.new",
+    variable_names=["full_vorticity", "average_vorticity", "mslp", "vmax10m"]
+)
+
 # Longer reanalyses
 _filename = "tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m"
 datasets["ERA20C"] = TrackDataset(
@@ -366,5 +373,4 @@ datasets["DePreSys4"] = TrackDataset(
 
 # To add
 # CANARI
-# ECMWF-OP-AN
 # ERA20CM
