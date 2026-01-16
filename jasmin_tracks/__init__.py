@@ -253,6 +253,17 @@ datasets["HighResMip2"] = None,
 datasets["nextGEMS"] = None,
 datasets["N1280-UM"] = None,
 
+datasets["DESTINe"] = TrackDataset(
+    fixed_path=huracan_project_path / "DESTINe",
+    extra_path="{model}/{scenario}/TC/{hemisphere}/"
+               "{model}_{scenario}_VOR_vertavg_{period}_T63",
+    filename="tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart",
+    variable_names=(
+        [f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]] +
+        ["mslp", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"]
+    ),
+)
+
 # Seasonal prediction ensembles
 datasets["GloSea5"] = TrackDataset(
     fixed_path=huracan_project_path / "GLOSEA5/TC/GLOSEA5",
