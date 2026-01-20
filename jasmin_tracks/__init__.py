@@ -256,10 +256,21 @@ datasets["N1280-UM"] = None,
 datasets["DESTINe"] = TrackDataset(
     fixed_path=huracan_project_path / "DESTINe",
     extra_path="{model}/{scenario}/TC/{hemisphere}/"
-               "{model}_{scenario}_VOR_vertavg_{period}_T63",
+               "{model}_{scenario}_VOR_vertavg_{period}_T63/",
     filename="tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart",
     variable_names=(
         [f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]] +
+        ["mslp", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"]
+    ),
+)
+
+datasets["MESACLIP"] = TrackDataset(
+    fixed_path=huracan_project_path / "MESACLIP/TC/",
+    extra_path="{scenario}/{hemisphere}/"
+               "CESM_{scenario}_VOR_vertavg_{period}_member{ensemble_member}_T63/",
+    filename="tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart",
+    variable_names=(
+        [f"vorticity{plev}hpa" for plev in [850, 700, 500, 300, 200]] +
         ["mslp", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"]
     ),
 )
