@@ -8,7 +8,9 @@ import huracanpy
 from . import datasets
 
 
-def get_tracks(dataset_name, alternative=None, **kwargs):
+def get_tracks(
+    dataset_name, alternative=None, drop=None, reduce_precision=False, **kwargs
+):
     dataset = datasets[dataset_name]
     if alternative is not None:
         dataset = dataset.select_alternative(alternative)
@@ -40,6 +42,12 @@ def get_tracks(dataset_name, alternative=None, **kwargs):
     all_tracks = huracanpy.concat_tracks(all_tracks, keep_track_id=True)
     all_tracks = gather_vorticity_profile(all_tracks)
 
+    if drop:
+        all_tracks = all_tracks.drop_vars(drop)
+
+    if reduce_precision:
+        drop_precision(all_tracks)
+
     return all_tracks
 
 
@@ -48,8 +56,8 @@ def gather_vorticity_profile(tracks):
     coordinate
     """
     plevs = [
-        float(result.named["n"]) for result in
-        [parse("vorticity{n}hpa", var) for var in tracks]
+        float(result.named["n"])
+        for result in [parse("vorticity{n}hpa", var) for var in tracks]
         if result is not None
     ]
 
@@ -73,3 +81,11 @@ def gather_vorticity_profile(tracks):
         tracks["relative_vorticity_lat"] = (["record", "pressure"], vorticity_lat)
 
     return tracks
+
+
+def drop_precision(tracks):
+    for var in tracks:
+        if np.issubdtype(tracks[var].dtype, float):
+            tracks[var] = tracks[var].astype(np.float32)
+        elif np.issubdtype(tracks[var].dtype, int):
+            tracks[var] = tracks[var].astype(np.int32)
