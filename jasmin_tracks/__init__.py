@@ -123,7 +123,7 @@ datasets["ERA5"] = TrackDataset(
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
         "nolat-tcident": dict(
-            filename=_filename + ".nolat.tcident.hart",
+            filename=_filename + ".nolat.tcident.hart.new",
             variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
         ),
         "nolat-tcident-dwcore": dict(
