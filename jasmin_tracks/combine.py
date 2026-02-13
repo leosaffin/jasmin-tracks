@@ -9,7 +9,13 @@ from . import datasets
 
 
 def get_tracks(
-    dataset_name, alternative=None, drop=None, reduce_precision=False, **kwargs
+    dataset_name,
+    alternative=None,
+    drop=None,
+    reduce_precision=False,
+    start_time=None,
+    end_time=None,
+    **kwargs,
 ):
     dataset = datasets[dataset_name]
     if alternative is not None:
@@ -47,6 +53,16 @@ def get_tracks(
 
     if reduce_precision:
         drop_precision(all_tracks)
+
+    if start_time:
+        genesis = all_tracks.hrcn.get_gen_vals()
+        track_ids = genesis.track_id[genesis.time >= start_time]
+        all_tracks = all_tracks.hrcn.sel_id(track_ids)
+
+    if end_time:
+        lysis = all_tracks.hrcn.get_apex_vals("time")
+        track_ids = lysis.track_id[lysis.time < end_time]
+        all_tracks = all_tracks.hrcn.sel_id(track_ids)
 
     return all_tracks
 
