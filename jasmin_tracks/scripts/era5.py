@@ -34,7 +34,7 @@ for subset, filename in [("nolat-nwc-tcident", "all"), ("nolat-tcident", "nolat-
     # So extract year for the start time and add time * 6hrs to get the actual time
     tracks_sh["time"] = np.array(
         tracks_sh.year.str.slice(0, 4) + "-07-01", dtype="datetime64"
-    ) + tracks_sh.time * np.timedelta64(6, "h")
+    ) + (tracks_sh.time - 1) * np.timedelta64(6, "h")
     tracks_sh = tracks_sh.drop_vars(["year"])
 
     lysis = tracks_sh.hrcn.get_apex_vals("time")
