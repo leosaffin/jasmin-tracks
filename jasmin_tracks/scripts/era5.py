@@ -39,7 +39,7 @@ for subset, filename in [("nolat-nwc-tcident", "all"), ("nolat-tcident", "nolat-
 
     lysis = tracks_sh.hrcn.get_apex_vals("time")
     track_ids = lysis.track_id[lysis.time < end_time]
-    all_tracks = tracks_sh.hrcn.sel_id(track_ids)
+    tracks_sh = tracks_sh.hrcn.sel_id(track_ids)
 
     # Original track ID already saved as "track_id_original". Setting keep_track_id=True
     # would overwrite track_id_original with the intermediate track IDs created when
