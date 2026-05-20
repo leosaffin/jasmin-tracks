@@ -22,7 +22,7 @@ for scenario in ["hist", "rcp26", "rcp60", "rcp85"]:
             year_sh = tracks.period[tracks.sign == "neg"].str.slice(0, 4).astype(int)
             start = pd.to_datetime(pd.DataFrame(dict(year=year, month=1, day=1)))
             start_sh = pd.to_datetime(pd.DataFrame(dict(year=year_sh, month=7, day=1)))
-            start = np.concat([start, start_sh])
+            start = np.concatenate([start, start_sh])
             time = start + (tracks.time - 1) * np.timedelta64(6, "h")
             tracks["time"] = time
 
