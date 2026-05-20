@@ -374,7 +374,7 @@ _filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
 _variable_names = [
     f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
 ] + ["vmax925hpa", "vmax10m", "mslp"]
-_extra_path = "Y{model_year:04d}/" + f"{_YYYYMMDDHH}/"
+_extra_path = "Y{year:04d}/" + f"{_YYYYMMDDHH}/"
 datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
     fixed_path=huracan_project_path / "EPSEXT100/TC/",
     extra_path=_extra_path
