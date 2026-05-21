@@ -105,13 +105,13 @@ def gather_vorticity_profile(tracks):
 
 def drop_precision(tracks):
     for var in tracks:
-        if np.issubdtype(tracks[var].dtype, float):
+        if np.issubdtype(tracks[var].dtype, np.floating):
             tracks[var] = tracks[var].astype(np.float32)
-        elif np.issubdtype(tracks[var].dtype, int):
+        elif np.issubdtype(tracks[var].dtype, np.integer):
             tracks[var] = tracks[var].astype(np.int32)
 
 
 def mask_values(tracks, mask_value):
     for var in tracks:
-        if np.issubdtype(tracks[var].dtype, float):
+        if np.issubdtype(tracks[var].dtype, np.floating):
             tracks[var][tracks[var] == mask_value] = np.nan
