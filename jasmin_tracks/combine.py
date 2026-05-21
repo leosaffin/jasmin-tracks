@@ -15,6 +15,7 @@ def get_tracks(
     reduce_precision=False,
     start_time=None,
     end_time=None,
+    mask_value=None,
     **kwargs,
 ):
     dataset = datasets[dataset_name]
@@ -48,21 +49,24 @@ def get_tracks(
     all_tracks = huracanpy.concat_tracks(all_tracks, keep_track_id=True)
     all_tracks = gather_vorticity_profile(all_tracks)
 
-    if drop:
+    if drop is not None:
         all_tracks = all_tracks.drop_vars(drop)
 
     if reduce_precision:
         drop_precision(all_tracks)
 
-    if start_time:
+    if start_time is not None:
         genesis = all_tracks.hrcn.get_gen_vals()
         track_ids = genesis.track_id[genesis.time >= start_time]
         all_tracks = all_tracks.hrcn.sel_id(track_ids)
 
-    if end_time:
+    if end_time is not None:
         lysis = all_tracks.hrcn.get_apex_vals("time")
         track_ids = lysis.track_id[lysis.time < end_time]
         all_tracks = all_tracks.hrcn.sel_id(track_ids)
+
+    if mask_value is not None:
+        mask_values(tracks, mask_value)
 
     return all_tracks
 
@@ -105,3 +109,9 @@ def drop_precision(tracks):
             tracks[var] = tracks[var].astype(np.float32)
         elif np.issubdtype(tracks[var].dtype, int):
             tracks[var] = tracks[var].astype(np.int32)
+
+
+def mask_values(tracks, mask_value):
+    for var in tracks:
+        if np.issubdtype(tracks[var].dtype, float):
+            tracks[var][tracks[var] == mask_value] = np.nan
