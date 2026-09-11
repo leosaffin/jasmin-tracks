@@ -9,7 +9,7 @@ from . import datasets
 
 
 def get_tracks(
-    dataset_name,
+    dataset,
     alternative=None,
     drop=None,
     reduce_precision=False,
@@ -18,7 +18,8 @@ def get_tracks(
     mask_value=None,
     **kwargs,
 ):
-    dataset = datasets[dataset_name]
+    if isinstance(dataset, str):
+        dataset = datasets[dataset]
     if alternative is not None:
         dataset = dataset.select_alternative(alternative)
 
@@ -114,4 +115,8 @@ def drop_precision(tracks):
 def mask_values(tracks, mask_value):
     for var in tracks:
         if np.issubdtype(tracks[var].dtype, np.floating):
-            tracks[var][tracks[var] == mask_value] = np.nan
+            try:
+                tracks[var][tracks[var] == mask_value] = np.nan
+            except ValueError:
+                tracks[var] = tracks[var].copy()
+                tracks[var][tracks[var] == mask_value] = np.nan
