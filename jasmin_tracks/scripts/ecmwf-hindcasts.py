@@ -29,13 +29,13 @@ from wcsi import nature
 
 
 def main(**kwargs):
-    keys = kwargs.keys()
-    for key in keys:
-        kwargs[key] = int(kwargs[key])
+    fname = "ecmwf-hindcasts"
 
     if "basin" in kwargs:
         basin = kwargs["basin"]
         del kwargs["basin"]
+
+        fname += f"_{basin}"
 
         def _select_tcs(tracks):
             return select_tcs(tracks, basin=basin)
@@ -52,15 +52,16 @@ def main(**kwargs):
         mask_value=1e25,
     )
 
-    fname = "ecmwf-hindcasts_{basin}_TCs"
-    for key in ["model_year", "year", "month", "day"]:
+    for key, fmt in [
+        ("model_year", "04d"),
+        ("year", "04d"),
+        ("month", "02d"),
+        ("day", "02d"),
+    ]:
         if key in kwargs:
-            fname += f"_{kwargs['key']}"
+            fname += f"_{format(kwargs['key'], fmt)}"
 
-    huracanpy.save(
-        tracks,
-        f"hindcast_tracks_{basin}_TC_{kwargs['model_year']}_{kwargs['month']}.nc",
-    )
+    huracanpy.save(tracks, fname + ".nc")
 
 
 def select_tcs(tracks, basin=None):
