@@ -35,13 +35,16 @@ def get_tracks(
         ]
 
     all_tracks = []
-    for n, fname in tqdm(enumerate(all_files), total=len(all_files)):
+    for fname in tqdm(all_files, total=len(all_files)):
         tracks = huracanpy.load(
             str(fname), source="TRACK", variable_names=dataset.variable_names
         )
 
         if track_filter_func is not None:
             tracks = track_filter_func(tracks)
+
+            if tracks is None:
+                continue
 
         # Add specific details from files
         try:

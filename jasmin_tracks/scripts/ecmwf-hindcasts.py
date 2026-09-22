@@ -66,19 +66,23 @@ def main(**kwargs):
 def select_tcs(tracks, basin=None):
     tracks_12hr = tracks.isel(record=np.where(tracks.time.dt.hour % 12 == 0)[0])
 
-    tracks_tc, summary = nature.wcsi(
-        tracks_12hr,
-        npoints=3,
-        basin=basin,
-        b_threshold=15,
-        vtl_threshold=0,
-        vtu_threshold=0,
-        vort_threshold=6,
-        intensification_threshold=0,
-        coherent=False,
-        ocean=False,
-        filter_size=3,
-    )
+    try:
+        tracks_tc, summary = nature.wcsi(
+            tracks_12hr,
+            npoints=3,
+            basin=basin,
+            b_threshold=15,
+            vtl_threshold=0,
+            vtu_threshold=0,
+            vort_threshold=6,
+            intensification_threshold=0,
+            coherent=False,
+            ocean=False,
+            filter_size=3,
+        )
+    except ValueError:
+        # No TC tracks found in basin
+        return
 
     # Add the "is_TC" info back to the full tracks
     tracks = tracks.hrcn.sel_id(summary.loc[summary.is_tc, "track_id"])
