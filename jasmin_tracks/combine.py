@@ -82,7 +82,7 @@ def get_tracks(
         all_tracks = all_tracks.hrcn.sel_id(track_ids)
 
     if mask_value is not None:
-        mask_values(tracks, mask_value)
+        mask_values(all_tracks, mask_value)
 
     return all_tracks
 
@@ -131,7 +131,11 @@ def mask_values(tracks, mask_value):
     for var in tracks:
         if np.issubdtype(tracks[var].dtype, np.floating):
             try:
-                tracks[var][tracks[var] == mask_value] = np.nan
+                tracks[var][:] = np.where(
+                    tracks[var] == mask_value, np.nan, tracks[var]
+                )
             except ValueError:
                 tracks[var] = tracks[var].copy()
-                tracks[var][tracks[var] == mask_value] = np.nan
+                tracks[var][:] = np.where(
+                    tracks[var] == mask_value, np.nan, tracks[var]
+                )
