@@ -1,10 +1,11 @@
 import warnings
 
-from parse import parse
+import huracanpy
 import numpy as np
+import pandas as pd
+from parse import parse
 from tqdm import tqdm
 
-import huracanpy
 from . import datasets
 
 
@@ -18,6 +19,7 @@ def get_tracks(
     start_time=None,
     end_time=None,
     mask_value=None,
+    fix_times=False,
     **kwargs,
 ):
     if isinstance(dataset, str):
@@ -70,6 +72,9 @@ def get_tracks(
 
     if reduce_precision:
         drop_precision(all_tracks)
+
+    if fix_times:
+        tracks = add_times(tracks)
 
     if start_time is not None:
         genesis = all_tracks.hrcn.get_gen_vals()
@@ -139,3 +144,18 @@ def mask_values(tracks, mask_value):
                 tracks[var][:] = np.where(
                     tracks[var] == mask_value, np.nan, tracks[var]
                 )
+
+
+def add_times(tracks):
+    # Fix time column
+    # The filenames are sorted, so it is all "pos" followed by all "neg"
+    year = tracks.period[tracks.sign == "pos"].astype(int)
+    year_sh = tracks.period[tracks.sign == "neg"].str.slice(0, 4).astype(int)
+    start = pd.to_datetime(pd.DataFrame(dict(year=year, month=1, day=1)))
+    start_sh = pd.to_datetime(pd.DataFrame(dict(year=year_sh, month=7, day=1)))
+    start = np.concatenate([start, start_sh])
+    time = start + (tracks.time - 1) * np.timedelta64(6, "h")
+    tracks["time"] = time
+
+    # Drop unneeded variables
+    return tracks.drop_vars(["period", "sign"])

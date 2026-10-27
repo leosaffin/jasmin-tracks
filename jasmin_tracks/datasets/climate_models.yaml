@@ -24,8 +24,8 @@ datasets:
   d4PDF:
   DESTINe:
     fixed_path: DESTINe
-    extra_path: "{model}/{scenario}/TC/{hemisphere}/{model}_{scenario}_VOR_vertavg_{period}_T63/"
-    filename: tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart.new
+    extra_path: "{experiment}/{scenario}/TC/{hemisphere}/{model}_{scenario}_VOR_vertavg_{period}_T63/"
+    filename: tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart
     variable_names:
       - seven_level_vorticity
       - mslp
