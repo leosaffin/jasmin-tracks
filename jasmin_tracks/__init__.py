@@ -2,6 +2,8 @@ from string import Formatter
 import re
 import pathlib
 
+import yaml
+
 from parse import parse
 
 # Paths to data on JASMIN
@@ -50,7 +52,7 @@ def _format_string_by_keyword_subset(format_string, keywords):
                 )
 
     # Replace any parts with multiple asterisks with a single asterisk
-    format_string = re.sub("\*+", "*", format_string)
+    format_string = re.sub(r"\*+", "*", format_string)
 
     return format_string.format(**kw_matching)
 
@@ -105,304 +107,84 @@ class TrackDataset:
         return f"{self.full_path}\n{self.keys}"
 
 
-# If .new is in the filename, then the track indices have been converted to timestamps
-datasets = dict()
-# Modern era reanalyses
-_filename = "tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind"
-_variable_names = [
-    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["mslp", "vmax925hpa", "vmax10m"]
-datasets["ERA5"] = TrackDataset(
-    fixed_path=huracan_project_path / "ERA5",
-    extra_path="{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/",
-    filename=_filename + "_addmslpavg_mslpdiff.new",
-    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
-    alternatives={
-        "nolat-nwc-tcident": dict(
-            filename=_filename + ".nolat.nwc.tcident.hart.new",
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-        "nolat-tcident": dict(
-            filename=_filename + ".nolat.tcident.hart.new",
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-        "nolat-tcident-dwcore": dict(
-            filename=_filename + ".nolat.tcident.hart.dwcore.new",
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-        "tcident": dict(
-            filename=_filename + ".tcident.new",
-            variable_names=_variable_names,
-        ),
-        "matches": dict(
-            extra_path="MATCH-{hemisphere}/",
-            filename="ERA5_{year}_match_yes.dat",
-            variable_names=_variable_names,
-        ),
-    },
-)
+def _expand_variable_name(variable_name, variable_sets):
+    """Expand a variable-set name in place, or return a regular variable."""
+    if variable_name not in variable_sets:
+        return [variable_name]
 
-_filename = "tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m"
-datasets["JRA3Q"] = TrackDataset(
-    fixed_path=huracan_project_path / "JRA3Q/TC/",
-    extra_path="{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/",
-    filename=_filename + ".new",
-    variable_names=_variable_names,
-    alternatives={
-        "nolat-nwc-tcident": dict(
-            filename=_filename + ".nolat.nwc.tcident.hart.new",
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-        "nolat-tcident": dict(
-            filename=_filename + ".nolat.tcident.hart.new",
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-        "tcident": dict(
-            filename=_filename + ".tcident.new",
-            variable_names=_variable_names,
-        ),
-    },
-)
-
-datasets["ECMWF-OP-AN"] = TrackDataset(
-    fixed_path=huracan_project_path / "ECMWF-OP-AN",
-    extra_path="{hemisphere}/OP_{time_period}_VOR_VERTAVG_T63/",
-    filename="tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp_addw10m.new",
-    variable_names=["full_vorticity", "average_vorticity", "mslp", "vmax10m"],
-)
-
-# Longer reanalyses
-_filename = "tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m"
-datasets["ERA20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "ERA20C/{hemisphere}/",
-    extra_path="ERA20C_VOR_{year:04d}_vertavg_T63/",
-    filename=_filename + "_addmslpavg_mslpdiff.new",
-    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
-    alternatives={
-        "tcident": dict(
-            filename=_filename + ".tcident.new",
-            variable_names=_variable_names,
-        ),
-    },
-)
-datasets["CERA20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "CERA20C/",
-    extra_path="{hemisphere}/CERA20C_VOR_{year}_{ensemble_member}_vertavg_T63/",
-    filename=_filename + "_addmslpavg_mslpdiff.new",
-    variable_names=_variable_names + ["mslpavg", "mslpdiff"],
-    alternatives={
-        "tcident": dict(
-            filename=_filename + ".tcident.new",
-            variable_names=_variable_names,
-        ),
-    },
-)
-
-_filename = "tr_trs_pos.2day_addT63vor_addw925_addw10m_addmslp_addprecip"
-_variable_names = [
-    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["vmax925hpa", "vmax10m", "mslp", "precip"]
-datasets["20CRv3"] = TrackDataset(
-    fixed_path=huracan_project_path / "NOAA-20CRv3/TC/NOAA-20CRv3",
-    extra_path="NOAA-20CRv3_VOR_VERTAVG_{month_range}{year}_{ensemble_member:03d}_T63/",
-    filename=_filename,
-    variable_names=_variable_names,
-    alternatives={
-        "tcident": dict(
-            filename=_filename + ".tcident.new",
-            variable_names=_variable_names,
-        ),
-    },
-)
-
-# Climate model simulations
-datasets["CMIP6"] = TrackDataset(
-    fixed_path=huracan_project_path / "CMIP6/TC/CMIP6",
-    extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}"
-    "{model_variant}_{experiment}_{variant}_{grid}_VOR850_jan-dec{year}_T42/",
-    filename="tr_trs_pos.2day_addvorT63_addwind.tcident.new.nc",
-)
-datasets["HighResMip"] = TrackDataset(
-    fixed_path=huracan_project_path / "HiResMIP/HiResMIP",
-    extra_path="{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}/"
-    "{model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63/",
-    filename="tr_trs_pos.2day_addvorT63_addwind_addmslp.tcident.new.nc",
-)
-datasets["SPHINX"] = TrackDataset(
-    fixed_path=huracan_project_path / "SPHINX/TC/SPHINX/",
-    # Physics = "BASE" or "STOC"
-    # Experiment = "PRESENT" or "FUTURE"
-    # Hemisphere = "-SH" or "" for NH
-    extra_path="T{spectral_resolution}-ATMOS-{physics}-{experiment}{hemisphere}/"
-    "{runid}_{year}_VOR_VERTAVG_T63/",
-    filename="{tr_or_ff}_trs_pos.addT63vor_add925w_add10w_addmslp_addprecip.tcident.hart",
-    variable_names=[f"vorticity_{n + 1}" for n in range(6)]
-    + ["v925hpa", "v10m", "mslp", "precip", "TL", "TU", "B"],
-)
-# "d4PDF": TrackDataset(
-#     fixed_path=huracan_project_path / "d4pdf/TC",
-#     extra_path="{experiment}/HPB_VOR_VERTAVG_jan-dec{year:04d}_{ensemble_member:03d}_T63"
-#                "{HFB_VOR_VERTAVG_jan-dec{year}_{:03d}_T63/ or "
-#                "HFB_VOR_VERTAVG_jan-dec{year}_HFB_4k_{??}_{:03d}_T63/}",
-#     # "HPB_VOR_VERTAVG_jul-jun20092010_100_T63"
-#     filename="tr_trs_pos.2day_addT63vor_add925w_add10w_addmslp_addprecip.tcident.new.nc"
-# ),
-datasets["d4PDF"] = (None,)
-datasets["HighResMip2"] = (None,)
-datasets["nextGEMS"] = (None,)
-datasets["N1280-UM"] = (None,)
-
-datasets["DESTINe"] = TrackDataset(
-    fixed_path=huracan_project_path / "DESTINe",
-    extra_path="{model}/{scenario}/TC/{hemisphere}/"
-    "{model}_{scenario}_VOR_vertavg_{period}_T63/",
-    filename="tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart",
-    variable_names=(
-        [f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]]
-        + ["mslp", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"]
-    ),
-)
-
-datasets["MESACLIP"] = TrackDataset(
-    fixed_path=huracan_project_path / "MESACLIP/TC/",
-    extra_path="{scenario}/{hemisphere}/"
-    "CESM_{scenario}_VOR_vertavg_{period}_member{ensemble_member}_T63/",
-    filename="tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart",
-    variable_names=(
-        [f"vorticity{plev}hpa" for plev in [850, 700, 500, 300, 200]]
-        + ["mslp", "vmax10m", "cps_vtl", "cps_vtu", "cps_b"]
-    ),
-)
-
-# Seasonal prediction ensembles
-datasets["GloSea5"] = TrackDataset(
-    fixed_path=huracan_project_path / "GLOSEA5/TC/GLOSEA5",
-    extra_path="",
-    filename="",
-)
-datasets["GloSea6"] = TrackDataset(
-    fixed_path=huracan_project_path / "GLOSEA6/TC",
-    # Broken links beyond here
-    extra_path="GLOSEA6-{experiment}/",
-    filename="",
-)
-
-datasets["ASF-20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "ANTJE",
-    extra_path="{experiment_id}/"
-    + _YYYYMMDDHH
-    + "/S2S_VOR_VERTAVG_"
-    + _YYYYMMDDHH
-    + "_{ensemble_member}_T63/",
-    filename="tr_trs_pos.2day_addvorT63_addwinds925_addwinds10m_addmslp.new",
-    variable_names=[f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 300, 200]]
-    + ["vmax925hpa", "vmax10m", "mslp"],
-)
-
-_extra_path = (
-    _YYYYMMDDHH + "/S2S_VOR850_" + _YYYYMMDDHH + "_{ensemble_member}_T42_hilat/"
-)
-_filename = "tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.new"
-_variable_names = [f"vorticity{plev}hpa" for plev in [850, 500, 200]] + [
-    "vmax850hpa",
-    "mslp",
-]
-datasets["CSF-20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "ANTJE/guh4",
-    extra_path=_extra_path,
-    filename=_filename + ".gz",
-    variable_names=_variable_names,
-)
-
-datasets["SEAS5-20C"] = TrackDataset(
-    fixed_path=huracan_project_path / "ANTJE/guxf",
-    extra_path=_extra_path,
-    filename=_filename,
-    variable_names=_variable_names,
-    alternatives={
-        "nolat-tcident": dict(
-            filename=_filename.replace(".new", ".nolat.tcident.hart.new"),
-            variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-        ),
-    },
-)
-
-datasets["C3S"] = (None,)
-
-# NWP
-# Year/Month/Day/Hour refer to initialisation time
-datasets["TIGGE"] = TrackDataset(
-    fixed_path=huracan_project_path / "TIGGE/TC/TIGGE",
-    extra_path="{model}/Y{year:04d}/"
-    + f"{_YYYYMMDDHH}/"
-    + "{model}_VOR_"
-    + f"{_YYYYMMDDHH}"
-    + "_{ensemble_member}/",
-    filename="tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp.new",
-    variable_names=["full_vorticity", "average_vorticity", "mslp"],
-)
-
-_filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new"
-_variable_names = [f"vorticity{plev}hpa" for plev in [850, 700, 500, 400, 300, 200]] + [
-    "vmax925hpa",
-    "vmax10m",
-    "mslp",
-]
-# For matched tracks, track ID in file ranges from 0-11.
-# 0 is analysis. 1 is control. 2-11 are ensemble members
-datasets["ECMWF_hindcasts"] = TrackDataset(
-    fixed_path=huracan_project_path / "ECMWF-HINDCASTS/TC/",
-    extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
-    f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" + "_{ensemble_member}/",
-    filename="tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new",
-    variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-    alternatives={
-        "matches": dict(
-            extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
-            + "MATCH_{hemisphere}_ERA5_highres/",
-            variable_names=["vmax925hpa", "vmax10m", "mslp"],
-            filename="trmatch_cntl_tr{ibtracs_id:04d}",
-        ),
-    },
-)
-
-datasets["ECMWF_high-res_hindcasts"] = TrackDataset(
-    fixed_path=huracan_project_path / "HINDCAST15/TC/",
-    extra_path=f"{_YYYYMMDDHH_model}/{_YYYYMMDDHH}/"
-    f"HIND_VOR_VERTAVG_{_YYYYMMDDHH_model}_{_YYYYMMDDHH}" + "_{ensemble_member}/",
-    filename="tr_trs_{sign}.2day_addwinds_addmslp.highres.new",
-    variable_names=["vmax925hpa", "vmax10m", "mslp"],
-)
-
-_filename = "tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new"
-_variable_names = [
-    f"vorticity{plev}hpa" for plev in [850, 700, 600, 500, 400, 300, 200]
-] + ["vmax925hpa", "vmax10m", "mslp"]
-_extra_path = "Y{year:04d}/" + f"{_YYYYMMDDHH}/"
-datasets["ECMWF_Extended_Ensemble"] = TrackDataset(
-    fixed_path=huracan_project_path / "EPSEXT100/TC/",
-    extra_path=_extra_path
-    + f"EPSEXT_VOR_VERTAVG_{_YYYYMMDDHH}_"
-    + "{ensemble_member}/",
-    filename=_filename,
-    variable_names=_variable_names + ["cps_vtl", "cps_vtu", "cps_b"],
-    alternatives={
-        "matches": dict(
-            extra_path=_extra_path + "MATCH_{hemisphere}/",
-            filename="trmatch_cntl_tr{storm_number:04d}",
-            variable_names=["vmax925hpa", "vmax10m", "mslp"],
-        ),
-    },
-)
-
-# Decadal Prediction Systems
-datasets["DePreSys4"] = TrackDataset(
-    fixed_path=huracan_project_path / "DePreSys4/TC/DePreSys4",
-    extra_path="DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}/",
-    filename="tr_trs_pos.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new",
-)
+    variable_names = []
+    for nested_name in variable_sets[variable_name]:
+        variable_names.extend(_expand_variable_name(nested_name, variable_sets))
+    return variable_names
 
 
-# To add
-# CANARI
-# ERA20CM
+def _resolve_variable_names(entry, variable_sets):
+    """Expand variable-set names wherever they occur in an entry's list."""
+    configured_names = entry.get("variable_names")
+    if not configured_names:
+        return
+
+    variable_names = []
+    for variable_name in configured_names:
+        variable_names.extend(_expand_variable_name(variable_name, variable_sets))
+    entry["variable_names"] = variable_names
+
+
+def _expand_path_templates(value, path_templates):
+    """Recursively expand named templates embedded in a path string."""
+    for name, template in path_templates.items():
+        token = "{" + name + "}"
+        if token in value:
+            replacement = _expand_path_templates(template, path_templates)
+            value = value.replace(token, replacement)
+    return value
+
+
+def _resolve_path_templates(entry, path_templates):
+    """Expand templates in all path-bearing fields of a dataset entry."""
+    for field in ("fixed_path", "extra_path", "filename"):
+        if field in entry:
+            entry[field] = _expand_path_templates(entry[field], path_templates)
+
+
+def _load_datasets():
+    """Build the dataset registry from the packaged YAML files."""
+    config_directory = pathlib.Path(__file__).with_name("datasets")
+    with (config_directory / "common.yaml").open() as config_file:
+        common = yaml.safe_load(config_file)
+
+    variable_sets = common["variable_sets"]
+    path_templates = common["path_templates"]
+    configured_datasets = {}
+    group_paths = sorted(
+        path for path in config_directory.glob("*.yaml") if path.name != "common.yaml"
+    )
+    for group_path in group_paths:
+        with group_path.open() as config_file:
+            configured_datasets.update(yaml.safe_load(config_file)["datasets"])
+
+    loaded_datasets = {}
+
+    for name, entry in configured_datasets.items():
+        # Preserve the existing placeholder value for unconfigured datasets.
+        if entry is None:
+            loaded_datasets[name] = (None,)
+        else:
+            _resolve_path_templates(entry, path_templates)
+            entry["fixed_path"] = huracan_project_path / entry["fixed_path"]
+            _resolve_variable_names(entry, variable_sets)
+
+            for alternative in (entry.get("alternatives") or {}).values():
+                _resolve_path_templates(alternative, path_templates)
+                if "fixed_path" in alternative:
+                    alternative["fixed_path"] = (
+                        huracan_project_path / alternative["fixed_path"]
+                    )
+                _resolve_variable_names(alternative, variable_sets)
+
+            loaded_datasets[name] = TrackDataset(**entry)
+
+    return loaded_datasets
+
+
+datasets = _load_datasets()
