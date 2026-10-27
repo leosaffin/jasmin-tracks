@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from parse import parse
 from tqdm import tqdm
+import wcsi
 
 from . import datasets
 
@@ -13,13 +14,13 @@ def get_tracks(
     dataset,
     alternative=None,
     filename_filters=None,
-    track_filter_func=None,
     drop=None,
     reduce_precision=False,
     start_time=None,
     end_time=None,
     mask_value=None,
     fix_times=False,
+    filter_tcs=False,
     **kwargs,
 ):
     if isinstance(dataset, str):
@@ -42,12 +43,6 @@ def get_tracks(
             str(fname), source="TRACK", variable_names=dataset.variable_names
         )
 
-        if track_filter_func is not None:
-            tracks = track_filter_func(tracks)
-
-            if tracks is None:
-                continue
-
         # Add specific details from files
         try:
             details = dataset.file_details(fname)
@@ -66,6 +61,9 @@ def get_tracks(
 
     all_tracks = huracanpy.concat_tracks(all_tracks, keep_track_id=True)
     all_tracks = gather_vorticity_profile(all_tracks)
+
+    if filter_tcs:
+        all_tracks = select_tcs(all_tracks)
 
     if drop is not None:
         all_tracks = all_tracks.drop_vars(drop)
@@ -150,7 +148,12 @@ def add_times(tracks):
     # Fix time column
     # The filenames are sorted, so it is all "pos" followed by all "neg"
     year = tracks.period[tracks.sign == "pos"].astype(int)
-    year_sh = tracks.period[tracks.sign == "neg"].str.slice(0, 4).astype(int)
+    year_sh = (
+        tracks.period[tracks.sign == "neg"]
+        .str.extract(r"(\d{8})", dim=None)
+        .str.slice(0, 4)
+        .astype(int)
+    )
     start = pd.to_datetime(pd.DataFrame(dict(year=year, month=1, day=1)))
     start_sh = pd.to_datetime(pd.DataFrame(dict(year=year_sh, month=7, day=1)))
     start = np.concatenate([start, start_sh])
@@ -159,3 +162,52 @@ def add_times(tracks):
 
     # Drop unneeded variables
     return tracks.drop_vars(["period", "sign"])
+
+
+def select_tcs(tracks):
+    tracks["wcsi"] = (
+        "record",
+        wcsi.wcsi(
+            tracks.track_id,
+            tracks.cps_b,
+            tracks.cps_vtl,
+            tracks.cps_vtu,
+            tracks.relative_vorticity,
+            filter_all=~np.isnan(tracks.mslp_lon),
+            npoints=4,
+            b_threshold=15,
+            vtl_threshold=0,
+            vtu_threshold=0,
+            vort_threshold=None,
+            vort_warm_core_threshold=None,
+            intensification_threshold=0,
+            coherent=False,
+            filter_size=5,
+            vort_warm_core_filter_size=None,
+        ),
+    )
+
+    if ~tracks.wcsi.any():
+        return
+
+    # Subset to TCs
+    tracks = tracks.hrcn.sel_id(np.unique(tracks.track_id[tracks.wcsi]))
+
+    tracks["nature"] = (
+        "record",
+        wcsi.nature(
+            track_id=tracks.track_id.values,
+            b=tracks.cps_b,
+            vtl=tracks.cps_vtl,
+            vtu=tracks.cps_vtu,
+            vortex=np.isnan(tracks.mslp_lon),
+            wcsi=tracks.wcsi,
+            b_threshold=15,
+            vtl_threshold=0,
+            vtu_threshold=0,
+            filter_size=5,
+            min_count=4,
+        ),
+    )
+
+    return tracks
