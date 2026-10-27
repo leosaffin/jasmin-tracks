@@ -11,6 +11,8 @@ from . import datasets
 def get_tracks(
     dataset,
     alternative=None,
+    filename_filters=None,
+    track_filter_func=None,
     drop=None,
     reduce_precision=False,
     start_time=None,
@@ -25,11 +27,24 @@ def get_tracks(
 
     all_files = sorted(dataset.find_files(**kwargs))
 
+    if filename_filters is not None:
+        all_files = [
+            f
+            for f in all_files
+            if np.all([filter_text not in f for filter_text in filename_filters])
+        ]
+
     all_tracks = []
-    for n, fname in tqdm(enumerate(all_files), total=len(all_files)):
+    for fname in tqdm(all_files, total=len(all_files)):
         tracks = huracanpy.load(
             str(fname), source="TRACK", variable_names=dataset.variable_names
         )
+
+        if track_filter_func is not None:
+            tracks = track_filter_func(tracks)
+
+            if tracks is None:
+                continue
 
         # Add specific details from files
         try:
