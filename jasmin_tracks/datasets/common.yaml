@@ -1,0 +1,51 @@
+# Shared path templates and variable sets.
+path_templates:
+  YYYYMMDDHH: "{year:04d}{month:02d}{day:02d}{hour:02d}"
+  YYYYMMDDHH_model: "{model_year:04d}{month:02d}{day:02d}{hour:02d}"
+variable_sets:
+  seven_level_vorticity:
+    - vorticity850hpa
+    - vorticity700hpa
+    - vorticity600hpa
+    - vorticity500hpa
+    - vorticity400hpa
+    - vorticity300hpa
+    - vorticity200hpa
+  six_level_vorticity:
+    - vorticity850hpa
+    - vorticity700hpa
+    - vorticity500hpa
+    - vorticity400hpa
+    - vorticity300hpa
+    - vorticity200hpa
+  five_level_vorticity:
+    - vorticity850hpa
+    - vorticity700hpa
+    - vorticity500hpa
+    - vorticity300hpa
+    - vorticity200hpa
+  three_level_vorticity:
+    - vorticity850hpa
+    - vorticity500hpa
+    - vorticity200hpa
+  winds_pressure:
+    - vmax925hpa
+    - vmax10m
+    - mslp
+  standard_track:
+    - seven_level_vorticity
+    - mslp
+    - vmax925hpa
+    - vmax10m
+  cyclone_phase_space:
+    - cps_vtl
+    - cps_vtu
+    - cps_b
+  twentieth_century_reanalysis:
+    - seven_level_vorticity
+    - winds_pressure
+    - precip
+  csf_track:
+    - three_level_vorticity
+    - vmax850hpa
+    - mslp

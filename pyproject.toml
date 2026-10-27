@@ -2,5 +2,15 @@
 name = "jasmin-tracks"
 version = "0.1.0"
 dependencies = [
-  "parse"
+  "parse",
+  "PyYAML"
 ]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.package-data]
+jasmin_tracks = ["datasets/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

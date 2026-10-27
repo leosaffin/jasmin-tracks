@@ -1,0 +1,46 @@
+# Climate model simulation datasets.
+datasets:
+  CMIP6:
+    fixed_path: CMIP6/TC/CMIP6
+    extra_path: "{model_parent}/{model_variant}/{experiment}/TC/\
+      {hemisphere}{model_variant}_{experiment}_{variant}_{grid}_VOR850_\
+      jan-dec{year}_T42/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwind.tcident.new.nc
+  HighResMip:
+    fixed_path: HiResMIP/HiResMIP
+    extra_path: "{model_parent}/{model_variant}/{experiment}/TC/{hemisphere}/\
+      {model_variant}_{experiment}_{variant}_gn_VOR_vertavg_jan-dec{year}_T63/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwind_addmslp.tcident.new.nc
+  SPHINX:
+    fixed_path: SPHINX/TC/SPHINX
+    extra_path: "T{spectral_resolution}-ATMOS-{physics}-{experiment}{hemisphere}/\
+      {runid}_{year}_VOR_VERTAVG_T63/"
+    filename: "{tr_or_ff}_trs_pos.addT63vor_add925w_add10w_addmslp_addprecip.tcident.hart"
+    variable_names:
+      - six_level_vorticity
+      - winds_pressure
+      - precip
+      - cyclone_phase_space
+  d4PDF:
+  DESTINe:
+    fixed_path: DESTINe
+    extra_path: "{model}/{scenario}/TC/{hemisphere}/{model}_{scenario}_VOR_vertavg_{period}_T63/"
+    filename: tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart.new
+    variable_names:
+      - seven_level_vorticity
+      - mslp
+      - vmax10m
+      - cyclone_phase_space
+  MESACLIP:
+    fixed_path: MESACLIP/TC
+    extra_path: "{scenario}/{hemisphere}/\
+      CESM_{scenario}_VOR_vertavg_{period}_member{ensemble_member}_T63/"
+    filename: tr_trs_{sign}.2day_addvor_addmslp_addwind10m.hart
+    variable_names:
+      - five_level_vorticity
+      - mslp
+      - vmax10m
+      - cyclone_phase_space
+  CANARI:
+  DYAMOND3:
+  EERIE:

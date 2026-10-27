@@ -1,0 +1,36 @@
+# Seasonal prediction ensemble datasets.
+datasets:
+  GloSea5:
+    fixed_path: GLOSEA5/TC/GLOSEA5
+    extra_path: ""
+    filename: ""
+  GloSea6:
+    fixed_path: GLOSEA6/TC
+    extra_path: GLOSEA6-{experiment}/
+    filename: ""
+  ASF-20C:
+    fixed_path: ANTJE
+    extra_path: "{experiment_id}/{YYYYMMDDHH}/S2S_VOR_VERTAVG_{YYYYMMDDHH}_{ensemble_member}_T63/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwinds925_addwinds10m_addmslp.new
+    variable_names:
+      - six_level_vorticity
+      - winds_pressure
+  CSF-20C:
+    fixed_path: ANTJE/guh4
+    extra_path: "{YYYYMMDDHH}/S2S_VOR850_{YYYYMMDDHH}_{ensemble_member}_T42_hilat/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.new.gz
+    variable_names:
+      - csf_track
+  SEAS5-20C:
+    fixed_path: ANTJE/guxf
+    extra_path: "{YYYYMMDDHH}/S2S_VOR850_{YYYYMMDDHH}_{ensemble_member}_T42_hilat/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.new
+    alternatives:
+      nolat-tcident:
+        filename: tr_trs_{sign}.2day_addvorT63_addwind850_addmslp.nolat.tcident.hart.new
+        variable_names:
+          - csf_track
+          - cyclone_phase_space
+    variable_names:
+      - csf_track
+  SEAS5:

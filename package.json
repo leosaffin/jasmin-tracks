@@ -1,0 +1,11 @@
+{
+  "name": "jasmin-tracks-tooling",
+  "private": true,
+  "scripts": {
+    "format:yaml": "prettier --write \"jasmin_tracks/datasets/*.yaml\"",
+    "format:yaml:check": "prettier --check \"jasmin_tracks/datasets/*.yaml\""
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

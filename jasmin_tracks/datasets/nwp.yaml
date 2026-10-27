@@ -1,0 +1,46 @@
+# Numerical weather prediction datasets.
+datasets:
+  TIGGE:
+    fixed_path: TIGGE/TC/TIGGE
+    extra_path: "{model}/Y{year:04d}/{YYYYMMDDHH}/{model}_VOR_{YYYYMMDDHH}_{ensemble_member}/"
+    filename: tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp.new
+    variable_names:
+      - full_vorticity
+      - average_vorticity
+      - mslp
+  ECMWF_hindcasts:
+    fixed_path: ECMWF-HINDCASTS/TC
+    extra_path: "{YYYYMMDDHH_model}/{YYYYMMDDHH}/\
+      HIND_VOR_VERTAVG_{YYYYMMDDHH_model}_{YYYYMMDDHH}_{ensemble_member}/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.highres.hart.new
+    variable_names:
+      - six_level_vorticity
+      - winds_pressure
+      - cyclone_phase_space
+    alternatives:
+      matches:
+        extra_path: "{YYYYMMDDHH_model}/{YYYYMMDDHH}/MATCH_{hemisphere}_ERA5_highres/"
+        filename: trmatch_cntl_tr{ibtracs_id:04d}
+        variable_names:
+          - winds_pressure
+  ECMWF_high-res_hindcasts:
+    fixed_path: HINDCAST15/TC
+    extra_path: "{YYYYMMDDHH_model}/{YYYYMMDDHH}/\
+      HIND_VOR_VERTAVG_{YYYYMMDDHH_model}_{YYYYMMDDHH}_{ensemble_member}/"
+    filename: tr_trs_{sign}.2day_addwinds_addmslp.highres.new
+    variable_names:
+      - winds_pressure
+  ECMWF_Extended_Ensemble:
+    fixed_path: EPSEXT100/TC
+    extra_path: "Y{year:04d}/{YYYYMMDDHH}/EPSEXT_VOR_VERTAVG_{YYYYMMDDHH}_{ensemble_member}/"
+    filename: tr_trs_{sign}.2day_addvorT63_addwinds_addmslp.hart.new
+    variable_names:
+      - seven_level_vorticity
+      - winds_pressure
+      - cyclone_phase_space
+    alternatives:
+      matches:
+        extra_path: Y{year:04d}/{YYYYMMDDHH}/MATCH_{hemisphere}/
+        filename: trmatch_cntl_tr{storm_number:04d}
+        variable_names:
+          - winds_pressure

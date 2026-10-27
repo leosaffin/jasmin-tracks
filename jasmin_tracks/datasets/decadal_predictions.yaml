@@ -1,0 +1,6 @@
+# Decadal prediction system datasets.
+datasets:
+  DePreSys4:
+    fixed_path: DePreSys4/TC/DePreSys4
+    extra_path: DePreSys4_{run_id}_{year:04d}_{ensemble_member:d}/
+    filename: tr_trs_{sign}.2day_addT63vor_addw10m_addmslp_addprecip.tcident.new

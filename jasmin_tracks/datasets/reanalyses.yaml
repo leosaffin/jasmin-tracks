@@ -1,0 +1,99 @@
+# Reanalysis datasets.
+datasets:
+  ERA5:
+    fixed_path: ERA5
+    extra_path: "{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/"
+    filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind_addmslpavg_mslpdiff.new
+    variable_names:
+      - standard_track
+      - mslpavg
+      - mslpdiff
+    alternatives:
+      nolat-nwc-tcident:
+        filename: "tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_\
+          add10mwind.nolat.nwc.tcident.hart.new"
+        variable_names:
+          - standard_track
+          - cyclone_phase_space
+      nolat-tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart.new
+        variable_names:
+          - standard_track
+          - cyclone_phase_space
+      tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind.tcident.new
+        variable_names:
+          - standard_track
+      matches:
+        extra_path: MATCH-{hemisphere}/
+        filename: ERA5_{year}_match_yes.dat
+        variable_names:
+          - standard_track
+  JRA3Q:
+    fixed_path: JRA3Q/TC
+    extra_path: "{hemisphere}/JRA3Q_{year}_VOR_VERTAVG_T63/"
+    filename: tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m.new
+    alternatives:
+      nolat-nwc-tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m.nolat.nwc.tcident.hart.new
+        variable_names:
+          - standard_track
+          - cyclone_phase_space
+      nolat-tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m.nolat.tcident.hart.new
+        variable_names:
+          - standard_track
+          - cyclone_phase_space
+      tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_addw925_addw10m.tcident.new
+        variable_names:
+          - standard_track
+    variable_names:
+      - standard_track
+  ECMWF-OP-AN:
+    fixed_path: ECMWF-OP-AN
+    extra_path: "{hemisphere}/OP_{time_period}_VOR_VERTAVG_T63/"
+    filename: tr_trs_{sign}.2day.addfullvor_addavgvor_addmslp_addw10m.new
+    variable_names:
+      - full_vorticity
+      - average_vorticity
+      - mslp
+      - vmax10m
+  ERA20C:
+    fixed_path: ERA20C/{hemisphere}
+    extra_path: ERA20C_VOR_{year:04d}_vertavg_T63/
+    filename: tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m_addmslpavg_mslpdiff.new
+    variable_names:
+      - standard_track
+      - mslpavg
+      - mslpdiff
+    alternatives:
+      tcident:
+        filename: tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new
+        variable_names:
+          - standard_track
+  ERA20CM:
+  CERA20C:
+    fixed_path: CERA20C
+    extra_path: "{hemisphere}/CERA20C_VOR_{year}_{ensemble_member}_vertavg_T63/"
+    filename: tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m_addmslpavg_mslpdiff.new
+    variable_names:
+      - standard_track
+      - mslpavg
+      - mslpdiff
+    alternatives:
+      tcident:
+        filename: tr_trs_{sign}.2day_addT63vor7lev_addmslp_addwind925_addwind10m.tcident.new
+        variable_names:
+          - standard_track
+  20CRv3:
+    fixed_path: NOAA-20CRv3/TC/NOAA-20CRv3
+    extra_path: NOAA-20CRv3_VOR_VERTAVG_{month_range}{year}_{ensemble_member:03d}_T63/
+    filename: tr_trs_{sign}.2day_addT63vor_addw925_addw10m_addmslp_addprecip
+    alternatives:
+      tcident:
+        filename: tr_trs_{sign}.2day_addT63vor_addw925_addw10m_addmslp_addprecip.tcident.new
+        variable_names:
+          - twentieth_century_reanalysis
+    variable_names:
+      - twentieth_century_reanalysis
