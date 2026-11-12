@@ -21,7 +21,7 @@ for experiment, model, scenario in exp_model_scenario:
         experiment=experiment,
         model=model,
         scenario=scenario,
-        filter_tcs=True,
+        filter_tcs=dict(vort_threshold=6, vort_warm_core_threshold=0),
         reduce_precision=True,
         mask_value=1e25,
         fix_times=True,

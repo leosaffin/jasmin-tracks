@@ -9,6 +9,19 @@ import wcsi
 
 from . import datasets
 
+default_tc_thresholds = dict(
+    npoints=4,
+    b_threshold=15,
+    vtl_threshold=0,
+    vtu_threshold=0,
+    vort_threshold=None,
+    vort_warm_core_threshold=None,
+    intensification_threshold=0,
+    coherent=False,
+    filter_size=5,
+    vort_warm_core_filter_size=None,
+)
+
 
 def get_tracks(
     dataset,
@@ -62,8 +75,11 @@ def get_tracks(
     all_tracks = huracanpy.concat_tracks(all_tracks, keep_track_id=True)
     all_tracks = gather_vorticity_profile(all_tracks)
 
-    if filter_tcs:
+    if filter_tcs is True:
         all_tracks = select_tcs(all_tracks)
+
+    elif isinstance(filter_tcs, dict):
+        all_tracks = select_tcs(all_tracks, **filter_tcs)
 
     if drop is not None:
         all_tracks = all_tracks.drop_vars(drop)
@@ -72,7 +88,7 @@ def get_tracks(
         drop_precision(all_tracks)
 
     if fix_times:
-        tracks = add_times(tracks)
+        all_tracks = add_times(all_tracks)
 
     if start_time is not None:
         genesis = all_tracks.hrcn.get_gen_vals()
@@ -164,7 +180,8 @@ def add_times(tracks):
     return tracks.drop_vars(["period", "sign"])
 
 
-def select_tcs(tracks):
+def select_tcs(tracks, **kwargs):
+    thresholds = {**default_tc_thresholds, **kwargs}
     tracks["wcsi"] = (
         "record",
         wcsi.wcsi(
@@ -174,16 +191,7 @@ def select_tcs(tracks):
             tracks.cps_vtu,
             tracks.relative_vorticity,
             filter_all=~np.isnan(tracks.mslp_lon),
-            npoints=4,
-            b_threshold=15,
-            vtl_threshold=0,
-            vtu_threshold=0,
-            vort_threshold=None,
-            vort_warm_core_threshold=None,
-            intensification_threshold=0,
-            coherent=False,
-            filter_size=5,
-            vort_warm_core_filter_size=None,
+            **thresholds,
         ),
     )
 
@@ -202,11 +210,11 @@ def select_tcs(tracks):
             vtu=tracks.cps_vtu,
             vortex=np.isnan(tracks.mslp_lon),
             wcsi=tracks.wcsi,
-            b_threshold=15,
-            vtl_threshold=0,
-            vtu_threshold=0,
-            filter_size=5,
-            min_count=4,
+            b_threshold=thresholds["b_threshold"],
+            vtl_threshold=thresholds["vtl_threshold"],
+            vtu_threshold=thresholds["vtu_threshold"],
+            filter_size=thresholds["filter_size"],
+            min_count=thresholds["npoints"],
         ),
     )
 
