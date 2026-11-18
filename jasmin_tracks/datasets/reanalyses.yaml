@@ -2,21 +2,20 @@
 datasets:
   ERA5:
     fixed_path: ERA5
-    extra_path: "{hemisphere}/ERA5_{year}_VOR_VERTAVG_T63/"
-    filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind_addmslpavg_mslpdiff.new
+    extra_path: "{hemisphere}/ERA5_{period}_VOR_VERTAVG_T63/"
+    filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind.hart.new
     variable_names:
       - standard_track
-      - mslpavg
-      - mslpdiff
+      - cyclone_phase_space
     alternatives:
       nolat-nwc-tcident:
         filename: "tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_\
-          add10mwind.nolat.nwc.tcident.hart.new"
+          add10mwind.nolat.nwc.tcident.hart"
         variable_names:
           - standard_track
           - cyclone_phase_space
       nolat-tcident:
-        filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart.new
+        filename: tr_trs_{sign}.2day_addT63vor_addmslp_add925wind_add10mwind.nolat.tcident.hart
         variable_names:
           - standard_track
           - cyclone_phase_space
